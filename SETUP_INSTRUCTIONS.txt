@@ -1,0 +1,364 @@
+================================================================================
+  CAFE POS SYSTEM - MySQL Database & CSV Export Setup
+================================================================================
+
+📋 WHAT'S NEW:
+✅ MySQL database integration for persistent storage
+✅ CSV export for sales reports
+✅ Automatic data saving for menu items, orders, and payments
+✅ Popular items tracking
+
+================================================================================
+  QUICK SETUP (Follow these steps)
+================================================================================
+
+STEP 1: Install MySQL
+----------------------
+macOS:
+  brew install mysql
+  brew services start mysql
+
+Windows:
+  Download from: https://dev.mysql.com/downloads/installer/
+  Run installer and follow wizard
+
+Linux:
+  sudo apt install mysql-server
+  sudo systemctl start mysql
+
+
+STEP 2: Create Database
+------------------------
+Open terminal and run:
+  
+  cd "/Users/khantkoko1999/eclipse-workspace/PBL Project"
+  mysql -u root -p < database_schema.sql
+
+(Enter your MySQL password when prompted. Press Enter if no password set)
+
+This will create:
+  - Database: khantkoko
+  - Tables: menu_items, orders, order_items, payments
+  - Sample data: 6 menu items
+
+
+STEP 3: Download MySQL JDBC Driver
+-----------------------------------
+1. Go to: https://dev.mysql.com/downloads/connector/j/
+2. Click "Platform Independent" → Download ZIP
+3. Extract the ZIP file
+4. Copy mysql-connector-java-8.0.x.jar to:
+   /Users/khantkoko1999/eclipse-workspace/PBL Project/lib/
+
+
+STEP 4: Configure Database Password
+------------------------------------
+Edit file: src/database/DatabaseManager.java
+
+Find line 11 and update:
+  private static final String DB_PASSWORD = ""; 
+
+Change to your MySQL password:
+  private static final String DB_PASSWORD = "your_password";
+
+Save the file.
+
+
+STEP 5: Compile the Project
+----------------------------
+Open terminal and run:
+
+cd "/Users/khantkoko1999/eclipse-workspace/PBL Project"
+
+javac -source 11 -target 11 -cp ".:lib/*" -d bin \
+  src/database/*.java \
+  src/util/*.java \
+  src/model/*.java \
+  src/view/*.java \
+  src/controller/*.java \
+  src/POSApplication.java
+
+
+STEP 6: Run the Application
+----------------------------
+java -cp "bin:lib/*" POSApplication
+
+
+STEP 7: Verify Success
+-----------------------
+You should see in console:
+
+✅ Database connected successfully!
+✅ Loaded 6 menu items from database
+===========================================
+   Cafe POS System Started Successfully!
+===========================================
+
+If you see these messages, database integration is working!
+
+================================================================================
+  USING CSV EXPORT FEATURE
+================================================================================
+
+1. Run the application
+2. Go to "Sales Statistics" tab (3rd tab)
+3. Make some test orders first:
+   - Go to "Order" tab
+   - Add items to order
+   - Click "Proceed to Payment"
+   - Complete payment
+
+4. Go back to "Sales Statistics" tab
+5. Click "📄 Export Sales to CSV" button
+6. Choose where to save the file
+7. Open the CSV file in Excel/Numbers/Google Sheets
+
+The CSV will include:
+  - All transactions from last 30 days
+  - Summary statistics
+  - Total orders, revenue, discounts
+
+================================================================================
+  TROUBLESHOOTING
+================================================================================
+
+Problem: "Database connection failed"
+Solution:
+  - Check MySQL is running: brew services list
+  - Verify database exists: mysql -u root -p -e "SHOW DATABASES;"
+  - Check password in DatabaseManager.java
+
+Problem: "ClassNotFoundException: com.mysql.cj.jdbc.Driver"
+Solution:
+  - JDBC driver JAR not found
+  - Check lib/ directory has mysql-connector-java-8.0.x.jar
+  - Recompile with: javac -cp ".:lib/*" ...
+
+Problem: "Access denied for user 'root'@'localhost'"
+Solution:
+  - Wrong password in DatabaseManager.java
+  - Reset MySQL password:
+    mysql -u root -p
+    ALTER USER 'root'@'localhost' IDENTIFIED BY 'new_password';
+
+Problem: "No menu items in database"
+Solution:
+  - Re-run database schema:
+    mysql -u root -p khantkoko < database_schema.sql
+
+Problem: CSV export shows no data
+Solution:
+  - Make some sales first!
+  - Check console for errors
+  - Verify database has data: 
+    mysql -u root -p khantkoko -e "SELECT * FROM payments;"
+
+================================================================================
+  USEFUL MYSQL COMMANDS
+================================================================================
+
+Connect to database:
+  mysql -u root -p khantkoko
+
+View all tables:
+  SHOW TABLES;
+
+View menu items:
+  SELECT * FROM menu_items;
+
+View today's sales:
+  SELECT * FROM payments WHERE payment_date = CURDATE();
+
+View total revenue:
+  SELECT SUM(amount) FROM payments;
+
+View popular items:
+  SELECT * FROM popular_items;
+
+Backup database:
+  mysqldump -u root -p khantkoko > backup.sql
+
+Restore database:
+  mysql -u root -p khantkoko < backup.sql
+
+================================================================================
+  FILE STRUCTURE
+================================================================================
+
+Project Root/
+├── database_schema.sql              ← MySQL database schema
+├── DATABASE_SETUP_GUIDE.md          ← Complete setup documentation
+├── DATABASE_QUICK_START.md          ← 5-minute quick start
+├── DATABASE_FEATURES_SUMMARY.md     ← Features overview
+├── SETUP_INSTRUCTIONS.txt           ← This file
+├── lib/
+│   ├── README.txt                   ← JDBC driver instructions
+│   └── mysql-connector-java-8.0.x.jar  ← Download this!
+└── src/
+    ├── database/                    ← New database package
+    │   ├── DatabaseManager.java     ← Connection manager
+    │   ├── MenuItemDAO.java         ← Menu operations
+    │   ├── OrderDAO.java            ← Order operations
+    │   └── PaymentDAO.java          ← Payment operations
+    ├── util/
+    │   └── CSVExporter.java         ← CSV export utility
+    └── ... (existing files)
+
+================================================================================
+  DATABASE TABLES CREATED
+================================================================================
+
+1. menu_items
+   - Stores all cafe menu items (coffee, beverages, desserts)
+   - Auto-loaded on application start
+   - Auto-saved when you add/update/delete items
+
+2. orders
+   - Stores all customer orders
+   - Includes date, time, totals, discounts
+   - Auto-saved when payment is completed
+
+3. order_items
+   - Stores items in each order
+   - Links orders to menu items
+   - Tracks quantity and prices
+
+4. payments
+   - Stores all payment transactions
+   - Tracks cash/card payments
+   - Used for sales statistics and CSV export
+
+================================================================================
+  WHAT HAPPENS AUTOMATICALLY
+================================================================================
+
+When you START the application:
+  ✓ Connects to MySQL database
+  ✓ Loads all menu items from database
+  ✓ Shows menu items in Order and Menu Management tabs
+
+When you ADD/EDIT/DELETE menu items:
+  ✓ Saves changes to database immediately
+  ✓ Shows confirmation message
+  ✓ Data persists even after closing app
+
+When you COMPLETE a payment:
+  ✓ Saves order to database
+  ✓ Saves payment details to database
+  ✓ Updates sales statistics
+  ✓ Shows success message with order ID
+
+When you EXPORT to CSV:
+  ✓ Queries database for sales data
+  ✓ Generates CSV file with formatting
+  ✓ Includes summary statistics
+  ✓ Opens file save dialog
+
+================================================================================
+  TESTING YOUR SETUP
+================================================================================
+
+Test 1: Database Connection
+  1. Run application
+  2. Check console for "✅ Database connected successfully!"
+  3. If yes → Success! ✓
+
+Test 2: Menu Loading
+  1. Check console for "✅ Loaded X menu items from database"
+  2. Go to Menu Management tab
+  3. See 6 default items → Success! ✓
+
+Test 3: Data Persistence
+  1. Add a new menu item
+  2. Close application
+  3. Reopen application
+  4. Check if new item is still there → Success! ✓
+
+Test 4: Order Saving
+  1. Make a test order
+  2. Complete payment
+  3. Open MySQL: mysql -u root -p khantkoko
+  4. Run: SELECT * FROM payments;
+  5. See your order → Success! ✓
+
+Test 5: CSV Export
+  1. Make 2-3 test orders
+  2. Go to Sales Statistics tab
+  3. Click "Export Sales to CSV"
+  4. Save file and open in Excel
+  5. See your orders → Success! ✓
+
+All tests pass? Congratulations! 🎉
+
+================================================================================
+  GETTING HELP
+================================================================================
+
+For detailed documentation, see:
+  - DATABASE_SETUP_GUIDE.md (complete guide)
+  - DATABASE_QUICK_START.md (fast setup)
+  - DATABASE_FEATURES_SUMMARY.md (feature overview)
+
+For MySQL help:
+  https://dev.mysql.com/doc/
+
+For JDBC help:
+  https://docs.oracle.com/javase/tutorial/jdbc/
+
+================================================================================
+  SUCCESS CHECKLIST
+================================================================================
+
+Setup Complete:
+  [ ] MySQL installed and running
+  [ ] Database 'khantkoko' created
+  [ ] Tables created successfully
+  [ ] Sample menu items loaded
+  [ ] JDBC driver downloaded
+  [ ] JDBC driver in lib/ directory
+  [ ] Database password configured
+  [ ] Project compiles without errors
+  [ ] Application starts successfully
+  [ ] Console shows database connected
+  [ ] Menu items load from database
+  [ ] Test order saves to database
+  [ ] CSV export creates valid file
+
+If all checked → You're ready to go! 🚀
+
+================================================================================
+  QUICK REFERENCE
+================================================================================
+
+Start MySQL:
+  brew services start mysql
+
+Stop MySQL:
+  brew services stop mysql
+
+Restart MySQL:
+  brew services restart mysql
+
+Connect to database:
+  mysql -u root -p khantkoko
+
+Compile project:
+  javac -source 11 -target 11 -cp ".:lib/*" -d bin src/**/*.java
+
+Run application:
+  java -cp "bin:lib/*" POSApplication
+
+Export CSV:
+  Sales Statistics tab → Export Sales to CSV button
+
+View database:
+  mysql -u root -p khantkoko
+  > SHOW TABLES;
+  > SELECT * FROM payments;
+
+================================================================================
+
+Ready to use your fully integrated POS system with database and CSV export! 🎉
+
+================================================================================
+
