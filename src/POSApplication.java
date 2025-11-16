@@ -2,9 +2,12 @@ import controller.MenuController;
 import controller.OrderController;
 import controller.SalesController;
 import model.MenuManager;
+import model.MenuItem;
 import model.SalesData;
 import view.MainView;
+import database.MenuItemDAO;
 import javax.swing.*;
+import java.util.List;
 
 /**
  * Main application entry point for the Cafe POS System
@@ -13,12 +16,13 @@ import javax.swing.*;
 public class POSApplication {
     private MainView mainView;
     private MenuManager menuManager;
-    private SalesData salesData;
+    private SalesData salesData;	
     
+    // Controllers - kept as fields for potential future use (cleanup, state management)
     @SuppressWarnings("unused")
     private MenuController menuController;
-    @SuppressWarnings("unused")
     private OrderController orderController;
+    @SuppressWarnings("unused")
     private SalesController salesController;
     
     public POSApplication() {
@@ -26,19 +30,23 @@ public class POSApplication {
         menuManager = new MenuManager();
         salesData = new SalesData();
         
+        // Load menu items from database BEFORE creating views (fast startup)
+        loadMenuFromDatabase();
+        
         // Initialize View
         mainView = new MainView();
         
         // Initialize Controllers
-        menuController = new MenuController(
-            menuManager, 
-            mainView.getMenuManagementView()
-        );
-        
         orderController = new OrderController(
             menuManager,
             salesData,
             mainView.getOrderView()
+        );
+        
+        menuController = new MenuController(
+            menuManager, 
+            mainView.getMenuManagementView(),
+            orderController
         );
         
         salesController = new SalesController(
@@ -53,11 +61,45 @@ public class POSApplication {
         mainView.setVisible(true);
     }
     
+    /**
+     * Pre-load menu items from database before UI initialization
+     * This ensures the UI shows database items immediately on startup
+     */
+    private void loadMenuFromDatabase() {
+        try {
+            MenuItemDAO menuItemDAO = new MenuItemDAO();
+            List<MenuItem> dbItems = menuItemDAO.getAllMenuItems();
+            
+            if (!dbItems.isEmpty()) {
+                // Clear default sample items
+                menuManager.getAllMenuItems().clear();
+                
+                // Add database items
+                for (MenuItem item : dbItems) {
+                    menuManager.addMenuItem(item);
+                }
+                
+                System.out.println("✅ Pre-loaded " + dbItems.size() + " menu items from database");
+            } else {
+                System.out.println("ℹ️ No items in database, using default menu");
+            }
+        } catch (Exception e) {
+            System.err.println("⚠️ Could not pre-load from database: " + e.getMessage());
+            System.err.println("⚠️ Using default menu items");
+            // Continue with default menu items
+        }
+    }
+    
     private void setupTabChangeListener() {
         JTabbedPane tabbedPane = mainView.getTabbedPane();
         
         tabbedPane.addChangeListener(e -> {
             int selectedIndex = tabbedPane.getSelectedIndex();
+            
+            // Refresh order view when switching to it (to reflect sold out changes)
+            if (selectedIndex == 0) { // Order tab
+                orderController.refreshMenu();
+            }
             
             // Refresh sales view when switching to it
             if (selectedIndex == 2) { // Sales tab

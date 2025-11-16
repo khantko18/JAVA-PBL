@@ -52,13 +52,28 @@ public class LanguageResources {
         english.put("empty_order_title", "Empty Order");
         english.put("confirm_clear", "Are you sure you want to clear the current order?");
         english.put("confirm_clear_title", "Confirm Clear");
+        english.put("buy", "BUY");
+        english.put("customize_order", "Customize Order");
+        english.put("temperature", "Temperature");
+        english.put("ice", "ICE");
+        english.put("hot", "HOT");
+        english.put("extras", "Extras");
+        english.put("add_shot", "Add Shot");
+        english.put("whipping_cream", "Whipping Cream");
+        english.put("order_type", "Order Type");
+        english.put("take_out", "Take Out");
+        english.put("in_store", "In Store");
+        english.put("item_details", "Item Details");
+        english.put("per_unit", "per unit");
+        english.put("add_to_order", "Add to Order");
         
         // Menu Management View
         english.put("menu_items_list", "Menu Items");
         english.put("id", "ID");
         english.put("name", "Name");
         english.put("description", "Description");
-        english.put("available", "Available");
+        english.put("available", "Sold Out");
+        english.put("sold_out", "품절");
         english.put("yes", "Yes");
         english.put("no", "No");
         english.put("add_edit_item", "Add/Edit Menu Item");
@@ -163,13 +178,28 @@ public class LanguageResources {
         korean.put("empty_order_title", "빈 주문");
         korean.put("confirm_clear", "현재 주문을 취소하시겠습니까?");
         korean.put("confirm_clear_title", "취소 확인");
+        korean.put("buy", "구매");
+        korean.put("customize_order", "주문 맞춤 설정");
+        korean.put("temperature", "온도");
+        korean.put("ice", "아이스");
+        korean.put("hot", "핫");
+        korean.put("extras", "추가 옵션");
+        korean.put("add_shot", "샷 추가");
+        korean.put("whipping_cream", "휘핑크림");
+        korean.put("order_type", "주문 유형");
+        korean.put("take_out", "테이크아웃");
+        korean.put("in_store", "매장");
+        korean.put("item_details", "항목 세부정보");
+        korean.put("per_unit", "개당");
+        korean.put("add_to_order", "주문에 추가");
         
         // Menu Management View
         korean.put("menu_items_list", "메뉴 항목");
         korean.put("id", "ID");
         korean.put("name", "이름");
         korean.put("description", "설명");
-        korean.put("available", "이용 가능");
+        korean.put("available", "품절 여부");
+        korean.put("sold_out", "품절");
         korean.put("yes", "예");
         korean.put("no", "아니오");
         korean.put("add_edit_item", "메뉴 항목 추가/수정");

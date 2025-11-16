@@ -1,9 +1,9 @@
 -- Cafe POS System Database Schema
--- Database: khantkoko
+-- Database: kkkDB
 
 -- Create database if not exists
-CREATE DATABASE IF NOT EXISTS kkkdb;
-USE kkkdb;
+CREATE DATABASE IF NOT EXISTS kkkDB;
+USE kkkDB;
 
 -- 1. Menu Items Table
 CREATE TABLE IF NOT EXISTS menu_items (
@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS menu_items (
     category VARCHAR(50) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     description TEXT,
+    image_path VARCHAR(255) DEFAULT NULL,
     available BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

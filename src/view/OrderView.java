@@ -75,6 +75,14 @@ public class OrderView extends JPanel {
         orderTable = new JTable(tableModel);
         orderTable.setFont(new Font("Arial", Font.PLAIN, 12));
         orderTable.setRowHeight(25);
+        
+        // Set column widths
+        orderTable.getColumnModel().getColumn(0).setPreferredWidth(150); // Item name
+        orderTable.getColumnModel().getColumn(1).setPreferredWidth(50);  // Qty
+        orderTable.getColumnModel().getColumn(1).setMaxWidth(70);
+        orderTable.getColumnModel().getColumn(2).setPreferredWidth(100);  // Price
+        orderTable.getColumnModel().getColumn(3).setPreferredWidth(100);  // Subtotal
+        
         JScrollPane tableScroll = new JScrollPane(orderTable);
         rightPanel.add(tableScroll, BorderLayout.CENTER);
         
@@ -156,14 +164,26 @@ public class OrderView extends JPanel {
             BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
-        card.setBackground(Color.WHITE);
+        
+        // Check if item is sold out
+        boolean isSoldOut = !item.isAvailable();
+        
+        // Gray out if sold out
+        if (isSoldOut) {
+            card.setBackground(new Color(240, 240, 240));
+        } else {
+            card.setBackground(Color.WHITE);
+        }
         
         // Item details
-        JPanel detailsPanel = new JPanel(new GridLayout(3, 1, 0, 2));
-        detailsPanel.setBackground(Color.WHITE);
+        JPanel detailsPanel = new JPanel(new GridLayout(4, 1, 0, 2));
+        detailsPanel.setBackground(card.getBackground());
         
         JLabel nameLabel = new JLabel(item.getName());
         nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        if (isSoldOut) {
+            nameLabel.setForeground(Color.GRAY);
+        }
         
         JLabel categoryLabel = new JLabel(langManager.translateCategory(item.getCategory()));
         categoryLabel.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -171,21 +191,59 @@ public class OrderView extends JPanel {
         
         JLabel priceLabel = new JLabel(langManager.formatPrice(item.getPrice()));
         priceLabel.setFont(new Font("Arial", Font.BOLD, 13));
-        priceLabel.setForeground(new Color(0, 128, 0));
+        if (isSoldOut) {
+            priceLabel.setForeground(Color.GRAY);
+        } else {
+            priceLabel.setForeground(new Color(0, 128, 0));
+        }
         
         detailsPanel.add(nameLabel);
         detailsPanel.add(categoryLabel);
         detailsPanel.add(priceLabel);
         
-        // Add button
-        JButton addButton = new JButton(langManager.getText("add"));
-        addButton.setBackground(new Color(0, 123, 255));
-        addButton.setForeground(Color.BLACK);
-        addButton.setFocusPainted(false);
-        addButton.putClientProperty("menuItem", item);
+        // Add sold out label if item is not available
+        if (isSoldOut) {
+            JLabel soldOutLabel = new JLabel(langManager.getText("sold_out"));
+            soldOutLabel.setFont(new Font("Arial", Font.BOLD, 12));
+            soldOutLabel.setForeground(new Color(220, 53, 69));
+            soldOutLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            detailsPanel.add(soldOutLabel);
+        }
+        
+        // BUY button panel
+        JPanel buyPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        buyPanel.setBackground(card.getBackground());
+        
+        JButton buyButton = new JButton(langManager.getText("buy"));
+        buyButton.setFont(new Font("Arial", Font.BOLD, 16));
+        buyButton.setPreferredSize(new Dimension(160, 45));
+        buyButton.setBackground(Color.WHITE);
+        buyButton.setForeground(Color.BLACK);
+        buyButton.setFocusPainted(false);
+        buyButton.setOpaque(true);
+        buyButton.setBorderPainted(true);
+        buyButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.BLACK, 2),
+            BorderFactory.createEmptyBorder(8, 28, 8, 28)
+        ));
+        buyButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        buyButton.putClientProperty("menuItem", item);
+        buyButton.putClientProperty("action", "buy");
+        buyButton.setEnabled(!isSoldOut); // Disable if sold out
+        
+        if (isSoldOut) {
+            buyButton.setBackground(new Color(240, 240, 240));
+            buyButton.setForeground(new Color(150, 150, 150));
+            buyButton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180), 2),
+                BorderFactory.createEmptyBorder(8, 28, 8, 28)
+            ));
+        }
+        
+        buyPanel.add(buyButton);
         
         card.add(detailsPanel, BorderLayout.CENTER);
-        card.add(addButton, BorderLayout.SOUTH);
+        card.add(buyPanel, BorderLayout.SOUTH);
         
         return card;
     }
@@ -276,6 +334,8 @@ public class OrderView extends JPanel {
         discountLabel.setText(langManager.formatPrice(discount));
         totalLabel.setText(langManager.formatPrice(total));
     }
+    
+    // No longer needed - removed updateMenuCardQuantities since we use BUY button now
     
     // Getters for UI components
     public JPanel getMenuPanel() { return menuPanel; }

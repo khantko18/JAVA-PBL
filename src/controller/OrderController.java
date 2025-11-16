@@ -2,6 +2,7 @@ package controller;
 
 import model.*;
 import view.OrderView;
+import view.OrderCustomizationDialog;
 import view.PaymentDialog;
 import util.LanguageManager;
 import database.OrderDAO;
@@ -109,49 +110,66 @@ public class OrderController {
     private void attachAddButtonListener(JPanel card) {
         Component[] components = card.getComponents();
         for (Component comp : components) {
-            if (comp instanceof JButton) {
-                JButton button = (JButton) comp;
-                // Remove existing listeners
-                for (java.awt.event.ActionListener al : button.getActionListeners()) {
-                    button.removeActionListener(al);
+            if (comp instanceof JPanel) {
+                // Look for BUY button in the buy panel
+                Component[] panelComponents = ((JPanel) comp).getComponents();
+                for (Component innerComp : panelComponents) {
+                    if (innerComp instanceof JButton) {
+                        JButton button = (JButton) innerComp;
+                        // Remove existing listeners
+                        for (java.awt.event.ActionListener al : button.getActionListeners()) {
+                            button.removeActionListener(al);
+                        }
+                        // Add new listener
+                        button.addActionListener(e -> {
+                            model.MenuItem item = (model.MenuItem) button.getClientProperty("menuItem");
+                            String action = (String) button.getClientProperty("action");
+                            
+                            if (item != null && "buy".equals(action)) {
+                                handleBuyButtonClick(item);
+                            }
+                        });
+                    }
                 }
-                // Add new listener
-                button.addActionListener(e -> {
-                    model.MenuItem item = (model.MenuItem) button.getClientProperty("menuItem");
-                    handleAddItemToOrder(item);
-                });
             }
         }
     }
     
-    private void handleAddItemToOrder(model.MenuItem item) {
+    private void handleBuyButtonClick(model.MenuItem item) {
         if (item == null) {
             return;
         }
         
-        String quantityStr = JOptionPane.showInputDialog(view,
-            langManager.getText("enter_quantity") + item.getName() + ":",
-            langManager.getText("quantity"),
-            JOptionPane.QUESTION_MESSAGE);
+        // Show customization dialog
+        Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(view);
+        OrderCustomizationDialog dialog = new OrderCustomizationDialog(parentFrame, item);
+        dialog.setVisible(true);
         
-        if (quantityStr != null && !quantityStr.trim().isEmpty()) {
-            try {
-                int quantity = Integer.parseInt(quantityStr.trim());
-                if (quantity > 0) {
-                    currentOrder.addItem(item, quantity);
-                    refreshOrderDisplay();
-                } else {
-                    JOptionPane.showMessageDialog(view,
-                        langManager.getText("invalid_quantity"),
-                        langManager.getText("error"),
-                        JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(view,
-                    langManager.getText("invalid_quantity_format"),
-                    langManager.getText("error"),
-                    JOptionPane.ERROR_MESSAGE);
-            }
+        // If user confirmed, add to order with selected quantity
+        if (dialog.isConfirmed()) {
+            int quantity = dialog.getQuantity();
+            String temperature = dialog.getTemperature();
+            String orderType = dialog.getOrderType();
+            boolean addShot = dialog.isAddShot();
+            boolean whippingCream = dialog.isWhippingCream();
+            
+            // Add item with quantity
+            currentOrder.addItem(item, quantity);
+            
+            // Build extras string
+            StringBuilder extras = new StringBuilder();
+            if (addShot) extras.append("Add Shot, ");
+            if (whippingCream) extras.append("Whipping Cream, ");
+            String extrasStr = extras.length() > 0 ? extras.substring(0, extras.length() - 2) : "None";
+            
+            // Log the order details
+            System.out.println("✅ Added to order: " + item.getName() + 
+                             " | Qty: " + quantity + 
+                             " | Temp: " + temperature + 
+                             " | Type: " + orderType +
+                             " | Extras: " + extrasStr);
+            
+            refreshOrderDisplay();
         }
     }
     
@@ -301,6 +319,11 @@ public class OrderController {
     
     public SalesData getSalesData() {
         return salesData;
+    }
+    
+    // Public method to refresh menu display (called when availability changes)
+    public void refreshMenu() {
+        refreshMenuDisplay();
     }
 }
 

@@ -9,16 +9,32 @@ import java.util.List;
  * Data Access Object for MenuItem
  */
 public class MenuItemDAO {
-    private Connection connection;
     
     public MenuItemDAO() {
-        this.connection = DatabaseManager.getInstance().getConnection();
+        // No longer caching connection - will get fresh connection each time
+    }
+    
+    // Helper method to get fresh connection
+    private Connection getConnection() {
+        return DatabaseManager.getInstance().getConnection();
     }
     
     // Create
     public boolean insertMenuItem(MenuItem item) {
-        String sql = "INSERT INTO menu_items (id, name, category, price, description, available) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+        Connection connection = getConnection();
+        if (connection == null) {
+            System.err.println("⚠️ Database connection is null! Cannot insert menu item.");
+            return false;
+        }
+        
+        // First check if item with this ID already exists
+        if (getMenuItemById(item.getId()) != null) {
+            System.err.println("⚠️ Menu item with ID " + item.getId() + " already exists. Cannot insert.");
+            return false;
+        }
+        
+        String sql = "INSERT INTO menu_items (id, name, category, price, description, image_path, available) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, item.getId());
@@ -26,11 +42,13 @@ public class MenuItemDAO {
             pstmt.setString(3, item.getCategory());
             pstmt.setDouble(4, item.getPrice());
             pstmt.setString(5, item.getDescription());
-            pstmt.setBoolean(6, item.isAvailable());
+            pstmt.setString(6, item.getImagePath());
+            pstmt.setBoolean(7, item.isAvailable());
             
             int rows = pstmt.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
+            System.err.println("⚠️ SQL Error inserting menu item: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -39,6 +57,11 @@ public class MenuItemDAO {
     // Read All
     public List<MenuItem> getAllMenuItems() {
         List<MenuItem> items = new ArrayList<>();
+        Connection connection = getConnection();
+        if (connection == null) {
+            return items;
+        }
+        
         String sql = "SELECT * FROM menu_items ORDER BY id";
         
         try (Statement stmt = connection.createStatement();
@@ -50,7 +73,8 @@ public class MenuItemDAO {
                     rs.getString("name"),
                     rs.getString("category"),
                     rs.getDouble("price"),
-                    rs.getString("description")
+                    rs.getString("description"),
+                    rs.getString("image_path")
                 );
                 item.setAvailable(rs.getBoolean("available"));
                 items.add(item);
@@ -64,6 +88,11 @@ public class MenuItemDAO {
     
     // Read by ID
     public MenuItem getMenuItemById(String id) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            return null;
+        }
+        
         String sql = "SELECT * FROM menu_items WHERE id = ?";
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -76,7 +105,8 @@ public class MenuItemDAO {
                         rs.getString("name"),
                         rs.getString("category"),
                         rs.getDouble("price"),
-                        rs.getString("description")
+                        rs.getString("description"),
+                        rs.getString("image_path")
                     );
                     item.setAvailable(rs.getBoolean("available"));
                     return item;
@@ -91,7 +121,12 @@ public class MenuItemDAO {
     
     // Update
     public boolean updateMenuItem(MenuItem item) {
-        String sql = "UPDATE menu_items SET name=?, category=?, price=?, description=?, available=? " +
+        Connection connection = getConnection();
+        if (connection == null) {
+            return false;
+        }
+        
+        String sql = "UPDATE menu_items SET name=?, category=?, price=?, description=?, image_path=?, available=? " +
                     "WHERE id=?";
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -99,8 +134,9 @@ public class MenuItemDAO {
             pstmt.setString(2, item.getCategory());
             pstmt.setDouble(3, item.getPrice());
             pstmt.setString(4, item.getDescription());
-            pstmt.setBoolean(5, item.isAvailable());
-            pstmt.setString(6, item.getId());
+            pstmt.setString(5, item.getImagePath());
+            pstmt.setBoolean(6, item.isAvailable());
+            pstmt.setString(7, item.getId());
             
             int rows = pstmt.executeUpdate();
             return rows > 0;
@@ -112,6 +148,11 @@ public class MenuItemDAO {
     
     // Delete
     public boolean deleteMenuItem(String id) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            return false;
+        }
+        
         String sql = "DELETE FROM menu_items WHERE id = ?";
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -127,6 +168,11 @@ public class MenuItemDAO {
     // Get by Category
     public List<MenuItem> getMenuItemsByCategory(String category) {
         List<MenuItem> items = new ArrayList<>();
+        Connection connection = getConnection();
+        if (connection == null) {
+            return items;
+        }
+        
         String sql = "SELECT * FROM menu_items WHERE category = ? ORDER BY name";
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -139,7 +185,8 @@ public class MenuItemDAO {
                         rs.getString("name"),
                         rs.getString("category"),
                         rs.getDouble("price"),
-                        rs.getString("description")
+                        rs.getString("description"),
+                        rs.getString("image_path")
                     );
                     item.setAvailable(rs.getBoolean("available"));
                     items.add(item);

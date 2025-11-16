@@ -139,7 +139,17 @@ public class MenuManagementView extends JPanel {
             tableModel = new DefaultTableModel(columns, 0) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
-                    return false;
+                    // Make only the "available" column (column 5) editable
+                    return column == 5;
+                }
+                
+                @Override
+                public Class<?> getColumnClass(int columnIndex) {
+                    // Set column 5 as Boolean for checkbox
+                    if (columnIndex == 5) {
+                        return Boolean.class;
+                    }
+                    return String.class;
                 }
             };
         } else {
@@ -204,7 +214,7 @@ public class MenuManagementView extends JPanel {
                 langManager.translateCategory(item.getCategory()),
                 langManager.formatPrice(item.getPrice()),
                 item.getDescription(),
-                item.isAvailable() ? langManager.getText("yes") : langManager.getText("no")
+                !item.isAvailable()  // Checked = Sold Out (not available)
             };
             tableModel.addRow(row);
         }
@@ -223,13 +233,20 @@ public class MenuManagementView extends JPanel {
     
     public void loadItemToForm(MenuItem item) {
         nameField.setText(item.getName());
-        priceField.setText(String.valueOf(item.getPrice()));
+        
+        // Display price in KRW if Korean mode, otherwise in USD
+        double displayPrice = item.getPrice();
+        if (langManager.getCurrentLanguage() == LanguageManager.Language.KOREAN) {
+            displayPrice = displayPrice * 1200; // Convert USD to KRW for editing
+        }
+        priceField.setText(String.format("%.0f", displayPrice));
+        
         descriptionField.setText(item.getDescription());
         categoryCombo.setSelectedItem(langManager.translateCategory(item.getCategory()));
         selectedItemId = item.getId();
         updateButton.setEnabled(true);
         deleteButton.setEnabled(true);
-        addButton.setEnabled(false);
+        addButton.setEnabled(true); // Keep Add button enabled
     }
     
     // Getters

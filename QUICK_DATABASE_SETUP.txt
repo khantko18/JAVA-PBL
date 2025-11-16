@@ -1,0 +1,87 @@
+================================================================================
+  QUICK DATABASE SETUP GUIDE
+================================================================================
+
+Your Configuration:
+  Database: kkkDB
+  User: root
+  Password: Khantkoko181$
+
+================================================================================
+  SETUP STEPS (Choose One)
+================================================================================
+
+OPTION 1: Automatic Setup (Recommended)
+----------------------------------------
+Run this command in terminal:
+
+  cd "/Users/khantkoko1999/eclipse-workspace/PBL Project Ver3"
+  ./setup-database-manual.sh
+
+
+OPTION 2: Manual Setup
+----------------------------------------
+1. Open terminal and connect to MySQL:
+   mysql -u root -p
+   (Enter password: Khantkoko181$)
+
+2. Create database:
+   CREATE DATABASE IF NOT EXISTS kkkDB;
+   EXIT;
+
+3. Load schema:
+   cd "/Users/khantkoko1999/eclipse-workspace/PBL Project Ver3"
+   mysql -u root -p kkkDB < database_schema.sql
+   (Enter password: Khantkoko181$)
+
+4. Verify:
+   mysql -u root -p kkkDB
+   SHOW TABLES;
+   SELECT * FROM menu_items;
+   EXIT;
+
+================================================================================
+  FILES UPDATED
+================================================================================
+
+✅ src/database/DatabaseManager.java
+   - DB_URL: jdbc:mysql://localhost:3306/kkkDB
+   - DB_USER: root
+   - DB_PASSWORD: Khantkoko181$
+
+✅ database_schema.sql
+   - CREATE DATABASE IF NOT EXISTS kkkDB;
+   - USE kkkDB;
+
+================================================================================
+  AFTER SETUP
+================================================================================
+
+Run the application:
+
+  ./compile.sh
+  ./run.sh
+
+Expected output:
+  ✅ Database connected successfully!
+  ✅ Loaded 6 menu items from database
+
+================================================================================
+  TROUBLESHOOTING
+================================================================================
+
+Issue: "Access denied"
+Solution: Check password is correct: Khantkoko181$
+
+Issue: "Can't connect"
+Solution: Start MySQL: brew services start mysql
+
+Issue: "Unknown database"
+Solution: Create it: mysql -u root -p -e "CREATE DATABASE kkkDB;"
+
+================================================================================
+
+For detailed instructions, see: DATABASE_SETUP.md
+
+================================================================================
+

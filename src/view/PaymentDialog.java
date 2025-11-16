@@ -107,7 +107,7 @@ public class PaymentDialog extends JDialog {
         cardRadio.addActionListener(e -> {
             amountReceivedField.setEnabled(false);
             amountReceivedField.setText("");
-            changeLabel.setText("$0.00");
+            changeLabel.setText(langManager.formatPrice(0));
         });
         
         amountReceivedField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -122,7 +122,17 @@ public class PaymentDialog extends JDialog {
     private void calculateChange() {
         try {
             double received = Double.parseDouble(amountReceivedField.getText());
-            double change = received - totalAmount;
+            double change;
+            
+            // If Korean language, user inputs in Won, so convert to base currency (USD)
+            if (langManager.getCurrentLanguage() == LanguageManager.Language.KOREAN) {
+                // Convert Won to USD (divide by exchange rate)
+                double receivedInUSD = received / 1200;
+                change = receivedInUSD - totalAmount;
+            } else {
+                change = received - totalAmount;
+            }
+            
             changeLabel.setText(langManager.formatPrice(Math.max(0, change)));
         } catch (NumberFormatException ex) {
             changeLabel.setText(langManager.formatPrice(0));
@@ -143,7 +153,12 @@ public class PaymentDialog extends JDialog {
     
     public double getAmountReceived() {
         try {
-            return Double.parseDouble(amountReceivedField.getText());
+            double received = Double.parseDouble(amountReceivedField.getText());
+            // If Korean language, convert Won to USD
+            if (langManager.getCurrentLanguage() == LanguageManager.Language.KOREAN) {
+                return received / 1200;
+            }
+            return received;
         } catch (NumberFormatException e) {
             return 0.0;
         }
