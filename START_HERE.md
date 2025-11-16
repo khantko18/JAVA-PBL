@@ -1,4 +1,7 @@
 # 🚀 Quick Start Guide - Your Setup
+ju juhaahahahadddd
+222
+dddddd
 
 ## ✅ What's Already Done
 
