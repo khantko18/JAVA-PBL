@@ -9,7 +9,7 @@ import java.util.Properties;
 public class DatabaseManager {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/kkkDB";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "Khantkoko18$";
+    private static final String DB_PASSWORD = "jsj884603#";
     
     private static DatabaseManager instance;
     private Connection connection;
