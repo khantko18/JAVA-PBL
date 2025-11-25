@@ -64,10 +64,10 @@ public class MembershipView extends JPanel {
         searchButton = new JButton(langManager.getText("search"));
         searchButton.setFont(new Font("Arial", Font.BOLD, 12));
         
-        refreshButton = new JButton("Refresh");
+        refreshButton = new JButton(langManager.getText("refresh"));
         refreshButton.setFont(new Font("Arial", Font.BOLD, 12));
         
-        totalMembersLabel = new JLabel("Total Members: 0");
+        totalMembersLabel = new JLabel(langManager.getText("total_members") + ": 0");
         totalMembersLabel.setFont(new Font("Arial", Font.BOLD, 13));
         
         searchPanel.add(searchLabel);
@@ -137,19 +137,19 @@ public class MembershipView extends JPanel {
         // Buttons panel
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         
-        addButton = new JButton("Add Member");
+        addButton = new JButton(langManager.getText("add_member"));
         addButton.setFont(new Font("Arial", Font.BOLD, 13));
         addButton.setPreferredSize(new Dimension(130, 35));
         
-        updateButton = new JButton("Update");
+        updateButton = new JButton(langManager.getText("update"));
         updateButton.setFont(new Font("Arial", Font.BOLD, 13));
         updateButton.setPreferredSize(new Dimension(130, 35));
         
-        deleteButton = new JButton("Delete");
+        deleteButton = new JButton(langManager.getText("delete"));
         deleteButton.setFont(new Font("Arial", Font.BOLD, 13));
         deleteButton.setPreferredSize(new Dimension(130, 35));
         
-        clearButton = new JButton("Clear Form");
+        clearButton = new JButton(langManager.getText("clear_form"));
         clearButton.setFont(new Font("Arial", Font.BOLD, 13));
         clearButton.setPreferredSize(new Dimension(130, 35));
         
