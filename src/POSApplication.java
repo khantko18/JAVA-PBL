@@ -5,7 +5,10 @@ import model.MenuManager;
 import model.MenuItem;
 import model.SalesData;
 import view.MainView;
+<<<<<<< HEAD
 import view.LoginDialog;
+=======
+>>>>>>> 786efbaa53d6a74a8cd9f12bcdb0bbda532c7371
 import database.MenuItemDAO;
 import javax.swing.*;
 import java.util.List;
@@ -17,7 +20,7 @@ import java.util.List;
 public class POSApplication {
     private MainView mainView;
     private MenuManager menuManager;
-    private SalesData salesData;
+    private SalesData salesData;	
     
     // Controllers - kept as fields for potential future use (cleanup, state management)
     @SuppressWarnings("unused")

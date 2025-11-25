@@ -33,8 +33,13 @@ public class MenuItemDAO {
             return false;
         }
         
+<<<<<<< HEAD
         String sql = "INSERT INTO menu_items (id, name, category, price, description, available) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
+=======
+        String sql = "INSERT INTO menu_items (id, name, category, price, description, image_path, available) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+>>>>>>> 786efbaa53d6a74a8cd9f12bcdb0bbda532c7371
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, item.getId());
@@ -42,7 +47,8 @@ public class MenuItemDAO {
             pstmt.setString(3, item.getCategory());
             pstmt.setDouble(4, item.getPrice());
             pstmt.setString(5, item.getDescription());
-            pstmt.setBoolean(6, item.isAvailable());
+            pstmt.setString(6, item.getImagePath());
+            pstmt.setBoolean(7, item.isAvailable());
             
             int rows = pstmt.executeUpdate();
             return rows > 0;
@@ -72,7 +78,8 @@ public class MenuItemDAO {
                     rs.getString("name"),
                     rs.getString("category"),
                     rs.getDouble("price"),
-                    rs.getString("description")
+                    rs.getString("description"),
+                    rs.getString("image_path")
                 );
                 item.setAvailable(rs.getBoolean("available"));
                 items.add(item);
@@ -103,7 +110,8 @@ public class MenuItemDAO {
                         rs.getString("name"),
                         rs.getString("category"),
                         rs.getDouble("price"),
-                        rs.getString("description")
+                        rs.getString("description"),
+                        rs.getString("image_path")
                     );
                     item.setAvailable(rs.getBoolean("available"));
                     return item;
@@ -123,7 +131,11 @@ public class MenuItemDAO {
             return false;
         }
         
+<<<<<<< HEAD
         String sql = "UPDATE menu_items SET name=?, category=?, price=?, description=?, available=? " +
+=======
+        String sql = "UPDATE menu_items SET name=?, category=?, price=?, description=?, image_path=?, available=? " +
+>>>>>>> 786efbaa53d6a74a8cd9f12bcdb0bbda532c7371
                     "WHERE id=?";
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -131,8 +143,9 @@ public class MenuItemDAO {
             pstmt.setString(2, item.getCategory());
             pstmt.setDouble(3, item.getPrice());
             pstmt.setString(4, item.getDescription());
-            pstmt.setBoolean(5, item.isAvailable());
-            pstmt.setString(6, item.getId());
+            pstmt.setString(5, item.getImagePath());
+            pstmt.setBoolean(6, item.isAvailable());
+            pstmt.setString(7, item.getId());
             
             int rows = pstmt.executeUpdate();
             return rows > 0;
@@ -181,7 +194,8 @@ public class MenuItemDAO {
                         rs.getString("name"),
                         rs.getString("category"),
                         rs.getDouble("price"),
-                        rs.getString("description")
+                        rs.getString("description"),
+                        rs.getString("image_path")
                     );
                     item.setAvailable(rs.getBoolean("available"));
                     items.add(item);
