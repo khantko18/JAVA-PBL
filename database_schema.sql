@@ -1,9 +1,9 @@
 -- Cafe POS System Database Schema
--- Database: khantkoko
+-- Database: kkkDB
 
 -- Create database if not exists
-CREATE DATABASE IF NOT EXISTS kkkdb;
-USE kkkdb;
+CREATE DATABASE IF NOT EXISTS kkkDB;
+USE kkkDB;
 
 -- 1. Menu Items Table
 CREATE TABLE IF NOT EXISTS menu_items (

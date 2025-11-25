@@ -1,0 +1,11 @@
+{
+  "code-runner.executorMap": {
+    "java": "cd \"$workspaceRoot\" && ./compile.sh && java -cp \"bin:lib/*\" POSApplication"
+  },
+  "code-runner.runInTerminal": true,
+  "code-runner.saveFileBeforeRun": true,
+  "code-runner.clearPreviousOutput": false,
+  "java.project.sourcePaths": ["src"],
+  "java.project.outputPath": "bin",
+  "java.project.referencedLibraries": ["lib/**/*.jar"]
+}

@@ -60,6 +60,23 @@ public class MenuManager {
     }
     
     public String generateNewId() {
+        // Find the maximum ID number from existing items
+        int maxId = 0;
+        for (String id : menuItems.keySet()) {
+            if (id.startsWith("M")) {
+                try {
+                    int num = Integer.parseInt(id.substring(1));
+                    if (num > maxId) {
+                        maxId = num;
+                    }
+                } catch (NumberFormatException e) {
+                    // Skip if ID format is unexpected
+                }
+            }
+        }
+        
+        // Generate new ID that's greater than any existing ID
+        nextId = maxId + 1;
         return String.format("M%03d", nextId++);
     }
     

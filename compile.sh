@@ -1,12 +1,12 @@
 #!/bin/bash
 # Cafe POS System - Compile Script
 
-cd "/Users/khantkoko1999/eclipse-workspace/PBL Project"
+cd "/Users/khantkoko1999/eclipse-workspace/PBL Project Ver3"
 
 echo "🔨 Compiling Cafe POS System..."
 echo ""
 
-javac -source 11 -target 11 -cp ".:lib/mysql-connector-j-9.4.0.jar" -d bin \
+javac -encoding UTF-8 -source 11 -target 11 -cp ".:lib/mysql-connector-j-9.4.0.jar" -d bin \
   src/database/*.java \
   src/util/*.java \
   src/model/*.java \

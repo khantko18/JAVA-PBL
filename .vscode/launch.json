@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch POSApplication",
+      "request": "launch",
+      "mainClass": "POSApplication",
+      "projectName": "PBL Project Ver3",
+      "classPaths": ["${workspaceFolder}/bin", "${workspaceFolder}/lib/*"],
+      "args": ""
+    }
+  ]
+}

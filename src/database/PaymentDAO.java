@@ -12,14 +12,23 @@ import java.util.Map;
  * Data Access Object for Payment
  */
 public class PaymentDAO {
-    private Connection connection;
     
     public PaymentDAO() {
-        this.connection = DatabaseManager.getInstance().getConnection();
+        // No longer caching connection - will get fresh connection each time
+    }
+    
+    // Helper method to get fresh connection
+    private Connection getConnection() {
+        return DatabaseManager.getInstance().getConnection();
     }
     
     // Insert Payment
     public boolean insertPayment(Payment payment) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            return false;
+        }
+        
         String sql = "INSERT INTO payments (payment_id, order_id, payment_date, payment_time, " +
                     "payment_method, amount, received_amount, change_amount) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -44,6 +53,11 @@ public class PaymentDAO {
     
     // Get Total Revenue
     public double getTotalRevenue() {
+        Connection connection = getConnection();
+        if (connection == null) {
+            return 0.0;
+        }
+        
         String sql = "SELECT SUM(amount) as total FROM payments";
         
         try (Statement stmt = connection.createStatement();
@@ -61,6 +75,11 @@ public class PaymentDAO {
     
     // Get Today's Sales
     public double getTodaySales() {
+        Connection connection = getConnection();
+        if (connection == null) {
+            return 0.0;
+        }
+        
         String sql = "SELECT SUM(amount) as total FROM payments WHERE payment_date = CURDATE()";
         
         try (Statement stmt = connection.createStatement();
@@ -79,6 +98,11 @@ public class PaymentDAO {
     // Get Payments by Date
     public List<Payment> getPaymentsByDate(LocalDate date) {
         List<Payment> payments = new ArrayList<>();
+        Connection connection = getConnection();
+        if (connection == null) {
+            return payments;
+        }
+        
         String sql = "SELECT * FROM payments WHERE payment_date = ? ORDER BY payment_time DESC";
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -113,6 +137,11 @@ public class PaymentDAO {
     // Get Popular Items
     public Map<String, Integer> getPopularItems() {
         Map<String, Integer> items = new HashMap<>();
+        Connection connection = getConnection();
+        if (connection == null) {
+            return items;
+        }
+        
         String sql = "SELECT menu_item_name, SUM(quantity) as total_qty " +
                     "FROM order_items " +
                     "GROUP BY menu_item_name " +
@@ -134,6 +163,10 @@ public class PaymentDAO {
     // Get Sales Summary for CSV Export
     public List<Map<String, Object>> getSalesSummary(LocalDate startDate, LocalDate endDate) {
         List<Map<String, Object>> summary = new ArrayList<>();
+        Connection connection = getConnection();
+        if (connection == null) {
+            return summary;
+        }
         
         String sql = "SELECT " +
                     "p.payment_date, " +

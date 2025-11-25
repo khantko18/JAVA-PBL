@@ -16,15 +16,17 @@ public class MenuController {
     private MenuManagementView view;
     private LanguageManager langManager;
     private MenuItemDAO menuItemDAO;
+    private OrderController orderController;
     
-    public MenuController(MenuManager menuManager, MenuManagementView view) {
+    public MenuController(MenuManager menuManager, MenuManagementView view, OrderController orderController) {
         this.menuManager = menuManager;
         this.view = view;
+        this.orderController = orderController;
         this.langManager = LanguageManager.getInstance();
         this.menuItemDAO = new MenuItemDAO();
         
-        // Load menu items from database
-        loadMenuFromDatabase();
+        // Database items already pre-loaded in POSApplication for fast startup
+        // Just initialize the UI with the existing items
         
         initializeListeners();
         refreshMenuTable();
@@ -35,9 +37,9 @@ public class MenuController {
         try {
             List<MenuItem> dbItems = menuItemDAO.getAllMenuItems();
             if (!dbItems.isEmpty()) {
-                // Clear existing items
+                // Clear existing default items
                 menuManager.getAllMenuItems().clear();
-                // Add items from database
+                // Add items from database directly (use database state as-is)
                 for (MenuItem item : dbItems) {
                     menuManager.addMenuItem(item);
                 }
@@ -47,6 +49,7 @@ public class MenuController {
             }
         } catch (Exception e) {
             System.err.println("⚠️ Failed to load menu from database: " + e.getMessage());
+            e.printStackTrace();
             // Continue with default menu items
         }
     }
@@ -62,6 +65,16 @@ public class MenuController {
         view.getMenuTable().getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 handleTableSelection();
+            }
+        });
+        
+        // Table model listener for checkbox changes
+        view.getMenuTable().getModel().addTableModelListener(e -> {
+            if (e.getColumn() == 5) { // Available column
+                int row = e.getFirstRow();
+                if (row >= 0) {
+                    handleAvailabilityChange(row);
+                }
             }
         });
         
@@ -89,6 +102,39 @@ public class MenuController {
         }
     }
     
+    private void handleAvailabilityChange(int row) {
+        try {
+            String itemId = (String) view.getMenuTable().getValueAt(row, 0);
+            Boolean isSoldOut = (Boolean) view.getMenuTable().getValueAt(row, 5);
+            
+            MenuItem item = menuManager.getMenuItem(itemId);
+            if (item != null) {
+                // Reverse logic: checked = sold out = not available
+                item.setAvailable(!isSoldOut);
+                
+                // Update in database
+                try {
+                    boolean updated = menuItemDAO.updateMenuItem(item);
+                    if (updated) {
+                        String status = isSoldOut ? langManager.getText("sold_out") : langManager.getText("yes");
+                        System.out.println("✅ Menu item status updated: " + itemId + " - " + status);
+                        
+                        // Refresh order view menu display
+                        if (orderController != null) {
+                            orderController.refreshMenu();
+                        }
+                    } else {
+                        System.err.println("⚠️ Failed to update menu item status in database");
+                    }
+                } catch (Exception dbEx) {
+                    System.err.println("⚠️ Database error: " + dbEx.getMessage());
+                }
+            }
+        } catch (Exception ex) {
+            System.err.println("⚠️ Error handling availability change: " + ex.getMessage());
+        }
+    }
+    
     private void handleAddItem() {
         try {
             String name = view.getNameField().getText().trim();
@@ -107,6 +153,11 @@ public class MenuController {
                 throw new IllegalArgumentException(langManager.getText("price_positive"));
             }
             
+            // Convert price from KRW to USD if in Korean mode
+            if (langManager.getCurrentLanguage() == LanguageManager.Language.KOREAN) {
+                price = price / 1200; // Convert KRW to USD
+            }
+            
             // Create and add new item
             String newId = menuManager.generateNewId();
             MenuItem newItem = new MenuItem(newId, name, category, price, description);
@@ -119,9 +170,15 @@ public class MenuController {
                     System.out.println("✅ Menu item saved to database: " + newId);
                 } else {
                     System.err.println("⚠️ Failed to save menu item to database");
+                    System.err.println("   - Item ID: " + newId);
+                    System.err.println("   - Item Name: " + name);
+                    System.err.println("   - Category: " + category);
+                    System.err.println("   - Price: " + price);
+                    System.err.println("   Check console for SQL errors above.");
                 }
             } catch (Exception dbEx) {
                 System.err.println("⚠️ Database error: " + dbEx.getMessage());
+                dbEx.printStackTrace();
             }
             
             // Refresh and clear
@@ -176,6 +233,11 @@ public class MenuController {
             double price = Double.parseDouble(priceText);
             if (price <= 0) {
                 throw new IllegalArgumentException(langManager.getText("price_positive"));
+            }
+            
+            // Convert price from KRW to USD if in Korean mode
+            if (langManager.getCurrentLanguage() == LanguageManager.Language.KOREAN) {
+                price = price / 1200; // Convert KRW to USD
             }
             
             // Update item
@@ -255,7 +317,10 @@ public class MenuController {
     }
     
     public void refreshMenuTable() {
-        view.displayMenuItems(menuManager.getAllMenuItems());
+        List<MenuItem> items = menuManager.getAllMenuItems();
+        // Sort items by ID (M001, M002, M003, etc.)
+        items.sort((a, b) -> a.getId().compareTo(b.getId()));
+        view.displayMenuItems(items);
     }
     
     public MenuManager getMenuManager() {

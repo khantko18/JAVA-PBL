@@ -11,14 +11,23 @@ import java.util.List;
  * Data Access Object for Order
  */
 public class OrderDAO {
-    private Connection connection;
     
     public OrderDAO() {
-        this.connection = DatabaseManager.getInstance().getConnection();
+        // No longer caching connection - will get fresh connection each time
+    }
+    
+    // Helper method to get fresh connection
+    private Connection getConnection() {
+        return DatabaseManager.getInstance().getConnection();
     }
     
     // Insert Order with Items
     public boolean insertOrder(Order order) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            return false;
+        }
+        
         String orderSql = "INSERT INTO orders (order_id, order_date, order_time, subtotal, " +
                          "discount_percent, discount_amount, total_amount, status) " +
                          "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -80,6 +89,11 @@ public class OrderDAO {
     // Get Orders by Date
     public List<Order> getOrdersByDate(LocalDate date) {
         List<Order> orders = new ArrayList<>();
+        Connection connection = getConnection();
+        if (connection == null) {
+            return orders;
+        }
+        
         String sql = "SELECT * FROM orders WHERE order_date = ? ORDER BY order_time DESC";
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -104,6 +118,11 @@ public class OrderDAO {
     
     // Get Total Orders Count
     public int getTotalOrdersCount() {
+        Connection connection = getConnection();
+        if (connection == null) {
+            return 0;
+        }
+        
         String sql = "SELECT COUNT(*) as count FROM orders";
         
         try (Statement stmt = connection.createStatement();
@@ -121,6 +140,11 @@ public class OrderDAO {
     
     // Get Today's Orders Count
     public int getTodayOrdersCount() {
+        Connection connection = getConnection();
+        if (connection == null) {
+            return 0;
+        }
+        
         String sql = "SELECT COUNT(*) as count FROM orders WHERE order_date = CURDATE()";
         
         try (Statement stmt = connection.createStatement();

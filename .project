@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>PBL Project</name>
-	<comment></comment>
+	<name>PBL Project Ver3</name>
+	<comment>Cafe POS System - Point of Sale Application with MySQL Database</comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -16,7 +16,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1761321719483</id>
+			<id>1</id>
 			<name></name>
 			<type>30</type>
 			<matcher>
