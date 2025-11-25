@@ -20,7 +20,26 @@ public class LanguageResources {
         english.put("app_title", "Cafe POS System");
         english.put("tab_order", "📋 Order");
         english.put("tab_menu", "☕ Menu Management");
+        english.put("tab_membership", "👥 Membership");
         english.put("tab_sales", "📊 Sales Statistics");
+        
+        // Membership View
+        english.put("members_list", "Members List");
+        english.put("search", "Search");
+        english.put("refresh", "Refresh");
+        english.put("total_members", "Total Members");
+        english.put("phone_number", "Phone Number");
+        english.put("name", "Name");
+        english.put("total_spent", "Total Spent");
+        english.put("level", "Level");
+        english.put("discount", "Discount");
+        english.put("to_next_level", "To Next Level");
+        english.put("add_edit_member", "Add/Edit Member");
+        english.put("add_member", "Add Member");
+        english.put("update", "Update");
+        english.put("delete", "Delete");
+        english.put("clear_form", "Clear Form");
+        english.put("max_level", "Max Level");
         
         // Order View
         english.put("menu_items", "Menu Items");
@@ -146,7 +165,26 @@ public class LanguageResources {
         korean.put("app_title", "카페 POS 시스템");
         korean.put("tab_order", "📋 주문");
         korean.put("tab_menu", "☕ 메뉴 관리");
+        korean.put("tab_membership", "👥 회원 관리");
         korean.put("tab_sales", "📊 매출 통계");
+        
+        // Membership View
+        korean.put("members_list", "회원 목록");
+        korean.put("search", "검색");
+        korean.put("refresh", "새로고침");
+        korean.put("total_members", "총 회원 수");
+        korean.put("phone_number", "전화번호");
+        korean.put("name", "이름");
+        korean.put("total_spent", "총 사용 금액");
+        korean.put("level", "등급");
+        korean.put("discount", "할인율");
+        korean.put("to_next_level", "다음 등급까지");
+        korean.put("add_edit_member", "회원 추가/수정");
+        korean.put("add_member", "회원 추가");
+        korean.put("update", "수정");
+        korean.put("delete", "삭제");
+        korean.put("clear_form", "입력 초기화");
+        korean.put("max_level", "최고 등급");
         
         // Order View
         korean.put("menu_items", "메뉴 항목");

@@ -19,15 +19,17 @@ public class OrderController {
     private Order currentOrder;
     private SalesData salesData;
     private OrderView view;
+    private view.MembershipView membershipView;
     private int orderCounter;
     private LanguageManager langManager;
     private OrderDAO orderDAO;
     private PaymentDAO paymentDAO;
     
-    public OrderController(MenuManager menuManager, SalesData salesData, OrderView view) {
+    public OrderController(MenuManager menuManager, SalesData salesData, OrderView view, view.MembershipView membershipView) {
         this.menuManager = menuManager;
         this.salesData = salesData;
         this.view = view;
+        this.membershipView = membershipView;
         this.orderCounter = 1;
         this.langManager = LanguageManager.getInstance();
         this.orderDAO = new OrderDAO();
@@ -230,9 +232,12 @@ public class OrderController {
         
         paymentDialog.getConfirmButton().addActionListener(e -> {
             try {
+                // Get final amount (after membership discount)
+                double finalAmount = paymentDialog.getFinalAmount();
+                
                 if (paymentDialog.isCashPayment()) {
                     double received = paymentDialog.getAmountReceived();
-                    if (received < totalAmount) {
+                    if (received < finalAmount) {
                         JOptionPane.showMessageDialog(paymentDialog,
                             langManager.getText("insufficient_payment"),
                             langManager.getText("payment_error"),
@@ -246,10 +251,34 @@ public class OrderController {
                 Payment.PaymentMethod method = paymentDialog.isCashPayment() ? 
                     Payment.PaymentMethod.CASH : Payment.PaymentMethod.CARD;
                 
-                Payment payment = new Payment(paymentId, currentOrder.getOrderId(), totalAmount, method);
+                Payment payment = new Payment(paymentId, currentOrder.getOrderId(), finalAmount, method);
                 
                 if (paymentDialog.isCashPayment()) {
                     payment.processCashPayment(paymentDialog.getAmountReceived());
+                }
+                
+                // Update membership if applicable
+                model.Member currentMember = paymentDialog.getCurrentMember();
+                if (currentMember != null) {
+                    // Add final amount to member's total spent
+                    boolean updated = paymentDialog.getMembershipController().applyPaymentToMember(
+                        currentMember.getPhoneNumber(), finalAmount);
+                    
+                    if (updated) {
+                        System.out.println("✅ Membership updated: " + currentMember.getName());
+                        
+                        // Refresh membership view to show updated total spent
+                        if (membershipView != null) {
+                            try {
+                                membershipView.loadMembers();
+                                System.out.println("✅ Membership view refreshed");
+                            } catch (Exception ex) {
+                                System.err.println("⚠️ Failed to refresh membership view: " + ex.getMessage());
+                            }
+                        }
+                    } else {
+                        System.err.println("⚠️ Failed to update membership");
+                    }
                 }
                 
                 // Record sale
@@ -273,7 +302,15 @@ public class OrderController {
                 
                 // Show success message
                 String message = langManager.getText("payment_success") + currentOrder.getOrderId() + "\n";
-                message += langManager.getText("total") + " " + langManager.formatPrice(totalAmount) + "\n";
+                
+                // Show membership discount info if applicable
+                if (currentMember != null) {
+                    message += "Member: " + currentMember.getName() + " (" + currentMember.getLevelDescription() + ")\n";
+                    message += "Original: " + langManager.formatPrice(totalAmount) + "\n";
+                    message += "Discount: -" + langManager.formatPrice(totalAmount - finalAmount) + "\n";
+                }
+                
+                message += langManager.getText("total") + " " + langManager.formatPrice(finalAmount) + "\n";
                 
                 if (paymentDialog.isCashPayment()) {
                     message += langManager.getText("received") + langManager.formatPrice(payment.getReceivedAmount()) + "\n";

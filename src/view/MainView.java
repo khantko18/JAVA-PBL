@@ -12,6 +12,7 @@ public class MainView extends JFrame {
     private JTabbedPane tabbedPane;
     private OrderView orderView;
     private MenuManagementView menuManagementView;
+    private MembershipView membershipView;
     private SalesView salesView;
     private JButton englishButton;
     private JButton koreanButton;
@@ -75,6 +76,7 @@ public class MainView extends JFrame {
         // Create views
         orderView = new OrderView();
         menuManagementView = new MenuManagementView();
+        membershipView = new MembershipView();
         salesView = new SalesView();
         
         // Add tabs
@@ -82,6 +84,9 @@ public class MainView extends JFrame {
         
         add(topPanel, BorderLayout.NORTH);
         add(tabbedPane, BorderLayout.CENTER);
+        
+        // Initialize language buttons to show correct state
+        initializeLanguageButtons();
     }
     
     private void updateLanguageButtons() {
@@ -95,10 +100,16 @@ public class MainView extends JFrame {
         }
     }
     
+    private void initializeLanguageButtons() {
+        // Set initial button states based on current language
+        updateLanguageButtons();
+    }
+    
     private void updateTabTitles() {
         tabbedPane.removeAll();
         tabbedPane.addTab(langManager.getText("tab_order"), orderView);
         tabbedPane.addTab(langManager.getText("tab_menu"), menuManagementView);
+        tabbedPane.addTab(langManager.getText("tab_membership"), membershipView);
         tabbedPane.addTab(langManager.getText("tab_sales"), salesView);
     }
     
@@ -123,6 +134,10 @@ public class MainView extends JFrame {
     
     public MenuManagementView getMenuManagementView() {
         return menuManagementView;
+    }
+    
+    public MembershipView getMembershipView() {
+        return membershipView;
     }
     
     public SalesView getSalesView() {
