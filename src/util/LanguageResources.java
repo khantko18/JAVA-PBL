@@ -115,9 +115,11 @@ public class LanguageResources {
         
         // Sales View
         english.put("total_revenue", "Total Revenue");
+        english.put("monthly_revenue", "Monthly Revenue");
         english.put("today_sales", "Today's Sales");
         english.put("today_orders", "Today's Orders");
         english.put("recent_transactions", "Recent Transactions");
+        english.put("cancelled_history", "Cancelled History");
         english.put("popular_items", "Popular Items");
         english.put("time", "Time");
         english.put("order_id", "Order ID");
@@ -125,6 +127,19 @@ public class LanguageResources {
         english.put("payment", "Payment");
         english.put("item_name", "Item Name");
         english.put("quantity_sold", "Quantity Sold");
+        
+        // Order Search
+        english.put("title_order_search", "Order Search");
+        english.put("label_year", "Y:");
+        english.put("label_month", "M:");
+        english.put("label_day", "D:");
+        english.put("label_price", "Price:");
+        english.put("btn_search", "Search");
+        
+        // [추가] 하단 버튼 리소스 (영어)
+        english.put("btn_print_receipt", "🖨️ Print Receipt");
+        english.put("btn_cancel_order", "❌ Cancel Order");
+        english.put("btn_export_csv", "📄 Export Sales to CSV");
         
         // Sample menu items
         english.put("americano", "Americano");
@@ -241,9 +256,11 @@ public class LanguageResources {
         
         // Sales View
         korean.put("total_revenue", "총 수익");
+        korean.put("monthly_revenue", "월간 수익");
         korean.put("today_sales", "오늘의 매출");
         korean.put("today_orders", "오늘의 주문");
-        korean.put("recent_transactions", "최근 거래");
+        korean.put("recent_transactions", "오늘의 거래");
+        korean.put("cancelled_history", "취소 내역");
         korean.put("popular_items", "인기 항목");
         korean.put("time", "시간");
         korean.put("order_id", "주문 ID");
@@ -251,6 +268,19 @@ public class LanguageResources {
         korean.put("payment", "결제");
         korean.put("item_name", "항목 이름");
         korean.put("quantity_sold", "판매 수량");
+        
+        // Order Search
+        korean.put("title_order_search", "주문 검색");
+        korean.put("label_year", "년:");
+        korean.put("label_month", "월:");
+        korean.put("label_day", "일:");
+        korean.put("label_price", "금액:");
+        korean.put("btn_search", "검색");
+
+        // [추가] 하단 버튼 리소스 (한글)
+        korean.put("btn_print_receipt", "🖨️ 영수증 출력");
+        korean.put("btn_cancel_order", "❌ 주문 취소");
+        korean.put("btn_export_csv", "📄 매출 CSV 내보내기");
         
         // Sample menu items
         korean.put("americano", "아메리카노");
@@ -275,4 +305,3 @@ public class LanguageResources {
         return korean.getOrDefault(key, key);
     }
 }
-

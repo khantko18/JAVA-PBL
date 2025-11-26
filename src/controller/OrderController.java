@@ -9,6 +9,8 @@ import database.OrderDAO;
 import database.PaymentDAO;
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -47,7 +49,12 @@ public class OrderController {
     }
     
     private void createNewOrder() {
-        String orderId = String.format("ORD%04d", orderCounter++);
+        // Modified: Generate Order ID as YYYYMMDD + 4 digit sequence
+        // Example: 202511240001
+        LocalDate now = LocalDate.now();
+        String dateStr = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String orderId = String.format("%s%04d", dateStr, orderCounter++);
+        
         currentOrder = new Order(orderId);
     }
     
@@ -326,4 +333,3 @@ public class OrderController {
         refreshMenuDisplay();
     }
 }
-

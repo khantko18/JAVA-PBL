@@ -7,7 +7,7 @@ import java.util.Properties;
  * Database connection manager for MySQL
  */
 public class DatabaseManager {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/kkkDB";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/kkkdb";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "jsj884603#";
     
