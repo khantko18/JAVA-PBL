@@ -5,136 +5,94 @@ import model.MenuManager;
 import view.MenuManagementView;
 import util.LanguageManager;
 import database.MenuItemDAO;
+
 import javax.swing.*;
 import java.util.List;
 
-/**
- * Controller for managing menu items
- */
 public class MenuController {
     private MenuManager menuManager;
     private MenuManagementView view;
     private LanguageManager langManager;
     private MenuItemDAO menuItemDAO;
     private OrderController orderController;
-    
+
     public MenuController(MenuManager menuManager, MenuManagementView view, OrderController orderController) {
         this.menuManager = menuManager;
         this.view = view;
         this.orderController = orderController;
         this.langManager = LanguageManager.getInstance();
         this.menuItemDAO = new MenuItemDAO();
-        
-        // Database items already pre-loaded in POSApplication for fast startup
-        // Just initialize the UI with the existing items
-        
+
+        loadMenuFromDatabase();
         initializeListeners();
         refreshMenuTable();
         setupLanguageListener();
     }
-    
+
     private void loadMenuFromDatabase() {
         try {
             List<MenuItem> dbItems = menuItemDAO.getAllMenuItems();
             if (!dbItems.isEmpty()) {
-                // Clear existing default items
                 menuManager.getAllMenuItems().clear();
-                // Add items from database directly (use database state as-is)
                 for (MenuItem item : dbItems) {
+                    item.setAvailable(true);
                     menuManager.addMenuItem(item);
+                    menuItemDAO.updateMenuItem(item);
                 }
-                System.out.println("✅ Loaded " + dbItems.size() + " menu items from database");
-            } else {
-                System.out.println("ℹ️ No menu items in database, using default items");
+                System.out.println("✅ Loaded " + dbItems.size() + " menu items from database.");
             }
         } catch (Exception e) {
-            System.err.println("⚠️ Failed to load menu from database: " + e.getMessage());
-            e.printStackTrace();
-            // Continue with default menu items
+            System.err.println("⚠️ Failed to load menu: " + e.getMessage());
         }
     }
-    
+
     private void setupLanguageListener() {
-        langManager.addLanguageChangeListener(newLanguage -> {
-            refreshMenuTable();
-        });
+        langManager.addLanguageChangeListener(newLanguage -> refreshMenuTable());
     }
-    
+
     private void initializeListeners() {
-        // Table selection listener
         view.getMenuTable().getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                handleTableSelection();
-            }
+            if (!e.getValueIsAdjusting()) handleTableSelection();
         });
-        
-        // Table model listener for checkbox changes
+
         view.getMenuTable().getModel().addTableModelListener(e -> {
             if (e.getColumn() == 5) { // Available column
                 int row = e.getFirstRow();
-                if (row >= 0) {
-                    handleAvailabilityChange(row);
-                }
+                if (row >= 0) handleAvailabilityChange(row);
             }
         });
-        
-        // Add button
+
         view.getAddButton().addActionListener(e -> handleAddItem());
-        
-        // Update button
         view.getUpdateButton().addActionListener(e -> handleUpdateItem());
-        
-        // Delete button
         view.getDeleteButton().addActionListener(e -> handleDeleteItem());
-        
-        // Clear button
         view.getClearButton().addActionListener(e -> view.clearForm());
     }
-    
+
     private void handleTableSelection() {
         int selectedRow = view.getMenuTable().getSelectedRow();
         if (selectedRow >= 0) {
             String itemId = (String) view.getMenuTable().getValueAt(selectedRow, 0);
             MenuItem item = menuManager.getMenuItem(itemId);
-            if (item != null) {
-                view.loadItemToForm(item);
-            }
+            if (item != null) view.loadItemToForm(item);
         }
     }
-    
+
     private void handleAvailabilityChange(int row) {
         try {
             String itemId = (String) view.getMenuTable().getValueAt(row, 0);
             Boolean isSoldOut = (Boolean) view.getMenuTable().getValueAt(row, 5);
-            
             MenuItem item = menuManager.getMenuItem(itemId);
+            
             if (item != null) {
-                // Reverse logic: checked = sold out = not available
                 item.setAvailable(!isSoldOut);
-                
-                // Update in database
-                try {
-                    boolean updated = menuItemDAO.updateMenuItem(item);
-                    if (updated) {
-                        String status = isSoldOut ? langManager.getText("sold_out") : langManager.getText("yes");
-                        System.out.println("✅ Menu item status updated: " + itemId + " - " + status);
-                        
-                        // Refresh order view menu display
-                        if (orderController != null) {
-                            orderController.refreshMenu();
-                        }
-                    } else {
-                        System.err.println("⚠️ Failed to update menu item status in database");
-                    }
-                } catch (Exception dbEx) {
-                    System.err.println("⚠️ Database error: " + dbEx.getMessage());
-                }
+                menuItemDAO.updateMenuItem(item);
+                if (orderController != null) orderController.refreshMenu();
             }
         } catch (Exception ex) {
-            System.err.println("⚠️ Error handling availability change: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
-    
+
     private void handleAddItem() {
         try {
             String name = view.getNameField().getText().trim();
@@ -142,189 +100,95 @@ public class MenuController {
             String category = langManager.getCategoryKey(displayCategory);
             String priceText = view.getPriceField().getText().trim();
             String description = view.getDescriptionField().getText().trim();
-            
-            // Validation
-            if (name.isEmpty()) {
-                throw new IllegalArgumentException(langManager.getText("name_empty"));
-            }
-            
+            // [최신 기능] 이미지 경로 가져오기
+            String imagePath = view.getImagePathField().getText().trim();
+
+            if (name.isEmpty()) throw new IllegalArgumentException(langManager.getText("name_empty"));
+
             double price = Double.parseDouble(priceText);
-            if (price <= 0) {
-                throw new IllegalArgumentException(langManager.getText("price_positive"));
-            }
-            
-            // Convert price from KRW to USD if in Korean mode
+            if (price <= 0) throw new IllegalArgumentException(langManager.getText("price_positive"));
+
             if (langManager.getCurrentLanguage() == LanguageManager.Language.KOREAN) {
-                price = price / 1200; // Convert KRW to USD
+                price = price / 1200;
             }
-            
-            // Create and add new item
+
             String newId = menuManager.generateNewId();
-            MenuItem newItem = new MenuItem(newId, name, category, price, description);
+            // 이미지 포함 생성자 사용
+            MenuItem newItem = new MenuItem(newId, name, category, price, description, imagePath);
             menuManager.addMenuItem(newItem);
-            
-            // Save to database
-            try {
-                boolean saved = menuItemDAO.insertMenuItem(newItem);
-                if (saved) {
-                    System.out.println("✅ Menu item saved to database: " + newId);
-                } else {
-                    System.err.println("⚠️ Failed to save menu item to database");
-                    System.err.println("   - Item ID: " + newId);
-                    System.err.println("   - Item Name: " + name);
-                    System.err.println("   - Category: " + category);
-                    System.err.println("   - Price: " + price);
-                    System.err.println("   Check console for SQL errors above.");
-                }
-            } catch (Exception dbEx) {
-                System.err.println("⚠️ Database error: " + dbEx.getMessage());
-                dbEx.printStackTrace();
-            }
-            
-            // Refresh and clear
+            menuItemDAO.insertMenuItem(newItem);
+
             refreshMenuTable();
             view.clearForm();
-            
-            JOptionPane.showMessageDialog(view, 
-                langManager.getText("item_added"), 
-                langManager.getText("success"), 
-                JOptionPane.INFORMATION_MESSAGE);
-            
+            JOptionPane.showMessageDialog(view, langManager.getText("item_added"), "Success", JOptionPane.INFORMATION_MESSAGE);
+
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(view, 
-                langManager.getText("invalid_price_format"), 
-                langManager.getText("error"), 
-                JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(view, langManager.getText("invalid_price_format"), "Error", JOptionPane.ERROR_MESSAGE);
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(view, 
-                ex.getMessage(), 
-                langManager.getText("validation_error"), 
-                JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(view, ex.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void handleUpdateItem() {
         try {
             String itemId = view.getSelectedItemId();
-            if (itemId == null) {
-                return;
-            }
-            
+            if (itemId == null) return;
+
             MenuItem item = menuManager.getMenuItem(itemId);
-            if (item == null) {
-                JOptionPane.showMessageDialog(view, 
-                    langManager.getText("error"), 
-                    langManager.getText("error"), 
-                    JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
+            if (item == null) return;
+
             String name = view.getNameField().getText().trim();
             String displayCategory = (String) view.getCategoryCombo().getSelectedItem();
             String category = langManager.getCategoryKey(displayCategory);
             String priceText = view.getPriceField().getText().trim();
             String description = view.getDescriptionField().getText().trim();
-            
-            // Validation
-            if (name.isEmpty()) {
-                throw new IllegalArgumentException(langManager.getText("name_empty"));
-            }
-            
+            // [최신 기능] 이미지 경로 가져오기
+            String imagePath = view.getImagePathField().getText().trim();
+
+            if (name.isEmpty()) throw new IllegalArgumentException(langManager.getText("name_empty"));
+
             double price = Double.parseDouble(priceText);
-            if (price <= 0) {
-                throw new IllegalArgumentException(langManager.getText("price_positive"));
-            }
-            
-            // Convert price from KRW to USD if in Korean mode
+            if (price <= 0) throw new IllegalArgumentException(langManager.getText("price_positive"));
+
             if (langManager.getCurrentLanguage() == LanguageManager.Language.KOREAN) {
-                price = price / 1200; // Convert KRW to USD
+                price = price / 1200;
             }
-            
-            // Update item
+
             item.setName(name);
             item.setCategory(category);
             item.setPrice(price);
             item.setDescription(description);
-            
-            // Update in database
-            try {
-                boolean updated = menuItemDAO.updateMenuItem(item);
-                if (updated) {
-                    System.out.println("✅ Menu item updated in database: " + itemId);
-                } else {
-                    System.err.println("⚠️ Failed to update menu item in database");
-                }
-            } catch (Exception dbEx) {
-                System.err.println("⚠️ Database error: " + dbEx.getMessage());
-            }
-            
-            // Refresh and clear
+            item.setImagePath(imagePath); // [Logic] 업데이트
+
+            menuItemDAO.updateMenuItem(item);
+
             refreshMenuTable();
             view.clearForm();
-            
-            JOptionPane.showMessageDialog(view, 
-                langManager.getText("item_updated"), 
-                langManager.getText("success"), 
-                JOptionPane.INFORMATION_MESSAGE);
-            
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(view, 
-                langManager.getText("invalid_price_format"), 
-                langManager.getText("error"), 
-                JOptionPane.ERROR_MESSAGE);
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(view, 
-                ex.getMessage(), 
-                langManager.getText("validation_error"), 
-                JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(view, langManager.getText("item_updated"), "Success", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(view, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void handleDeleteItem() {
         String itemId = view.getSelectedItemId();
-        if (itemId == null) {
-            return;
+        if (itemId == null) return;
+
+        int confirm = JOptionPane.showConfirmDialog(view, langManager.getText("confirm_delete"), "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            menuManager.removeMenuItem(itemId);
+            menuItemDAO.deleteMenuItem(itemId);
+            refreshMenuTable();
+            view.clearForm();
+            JOptionPane.showMessageDialog(view, langManager.getText("item_deleted"), "Success", JOptionPane.INFORMATION_MESSAGE);
         }
-        
-        int confirm = JOptionPane.showConfirmDialog(view,
-            langManager.getText("confirm_delete"),
-            langManager.getText("confirm_delete_title"),
-            JOptionPane.YES_NO_OPTION);
-        
-            if (confirm == JOptionPane.YES_OPTION) {
-                menuManager.removeMenuItem(itemId);
-                
-                // Delete from database
-                try {
-                    boolean deleted = menuItemDAO.deleteMenuItem(itemId);
-                    if (deleted) {
-                        System.out.println("✅ Menu item deleted from database: " + itemId);
-                    } else {
-                        System.err.println("⚠️ Failed to delete menu item from database");
-                    }
-                } catch (Exception dbEx) {
-                    System.err.println("⚠️ Database error: " + dbEx.getMessage());
-                }
-                
-                refreshMenuTable();
-                view.clearForm();
-                
-                JOptionPane.showMessageDialog(view,
-                    langManager.getText("item_deleted"),
-                    langManager.getText("success"),
-                    JOptionPane.INFORMATION_MESSAGE);
-            }
     }
-    
+
     public void refreshMenuTable() {
         List<MenuItem> items = menuManager.getAllMenuItems();
-        // Sort items by ID (M001, M002, M003, etc.)
         items.sort((a, b) -> a.getId().compareTo(b.getId()));
         view.displayMenuItems(items);
-    }
-    
-    public MenuManager getMenuManager() {
-        return menuManager;
+        if (orderController != null) orderController.refreshMenu();
     }
 }
-
