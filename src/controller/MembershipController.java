@@ -96,4 +96,9 @@ public class MembershipController {
     public List<Member> getMembersByLevel(int level) {
         return memberDAO.getMembersByLevel(level);
     }
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67

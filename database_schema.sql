@@ -84,7 +84,25 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
 -- 7. Views
+=======
+-- 5. Members Table (Membership Program)
+CREATE TABLE IF NOT EXISTS members (
+    phone_number VARCHAR(20) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    total_spent DECIMAL(12, 4) DEFAULT 0.0,
+    membership_level INT NOT NULL DEFAULT 5,
+    discount_percent DECIMAL(5, 2) NOT NULL DEFAULT 0.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_name (name),
+    INDEX idx_level (membership_level),
+    INDEX idx_total_spent (total_spent)
+);
+
+-- 6. Sales Summary View (for easy reporting)
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
 CREATE OR REPLACE VIEW sales_summary AS
 SELECT 
     DATE(p.payment_date) as sale_date,
@@ -97,6 +115,10 @@ FROM payments p
 GROUP BY DATE(p.payment_date)
 ORDER BY sale_date DESC;
 
+<<<<<<< HEAD
+=======
+-- 7. Popular Items View
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
 CREATE OR REPLACE VIEW popular_items AS
 SELECT 
     oi.menu_item_id,
@@ -120,6 +142,7 @@ INSERT INTO menu_items (id, name, category, price, description, image_path) VALU
 ('M006', 'Croissant', 'Dessert', 3.50, 'Butter croissant', NULL)
 ON DUPLICATE KEY UPDATE name=VALUES(name);
 
+<<<<<<< HEAD
 -- [수정] 샘플 멤버 데이터 (누락된 컬럼 포함)
 INSERT INTO members (member_id, name, phone_number, points, total_spent, membership_level, discount_percent) VALUES
 ('MEM001', 'Kim Cheolsu', '010-1234-5678', 100, 500.00, 4, 5.00),
@@ -128,9 +151,19 @@ INSERT INTO members (member_id, name, phone_number, points, total_spent, members
 ON DUPLICATE KEY UPDATE points=VALUES(points);
 
 -- Indexes
+=======
+-- Create indexes for better performance (drop first if they exist)
+DROP INDEX IF EXISTS idx_orders_date ON orders;
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
 CREATE INDEX idx_orders_date ON orders(order_date);
+
+DROP INDEX IF EXISTS idx_payments_date ON payments;
 CREATE INDEX idx_payments_date ON payments(payment_date);
+
+DROP INDEX IF EXISTS idx_order_items_order ON order_items;
 CREATE INDEX idx_order_items_order ON order_items(order_id);
+
+DROP INDEX IF EXISTS idx_menu_category ON menu_items;
 CREATE INDEX idx_menu_category ON menu_items(category);
 CREATE INDEX idx_members_phone ON members(phone_number);
 

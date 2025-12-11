@@ -39,7 +39,8 @@ public class POSApplication {
         orderController = new OrderController(
             menuManager,
             salesData,
-            mainView.getOrderView()
+            mainView.getOrderView(),
+            mainView.getMembershipView()
         );
         
         menuController = new MenuController(

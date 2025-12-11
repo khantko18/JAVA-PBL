@@ -20,7 +20,7 @@ public class LanguageManager {
     }
     
     private LanguageManager() {
-        currentLanguage = Language.ENGLISH;
+        currentLanguage = Language.KOREAN;  // Start in Korean by default
         listeners = new ArrayList<>();
     }
     

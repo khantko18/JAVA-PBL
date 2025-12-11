@@ -7,6 +7,12 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
+<<<<<<< HEAD
+=======
+/**
+ * Dialog for processing payments with membership support
+ */
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
 public class PaymentDialog extends JDialog {
     private JRadioButton cashRadio;
     private JRadioButton cardRadio;
@@ -33,9 +39,12 @@ public class PaymentDialog extends JDialog {
     private JLabel changeTextLabel;
     private JLabel phoneLabel;
     private JLabel membershipLabel;
+<<<<<<< HEAD
     private JLabel finalAmountTitleLabel;
     private TitledBorder topPanelBorder;
     private JPanel topPanel;
+=======
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
     
     public PaymentDialog(Frame parent, double totalAmount) {
         super(parent);
@@ -47,7 +56,11 @@ public class PaymentDialog extends JDialog {
         this.currentMember = null;
         
         setTitle(langManager.getText("process_payment"));
+<<<<<<< HEAD
         setSize(500, 550);
+=======
+        setSize(500, 500);
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setModal(true);
@@ -60,6 +73,7 @@ public class PaymentDialog extends JDialog {
         setLayout(new BorderLayout(10, 10));
         
         // Top panel - Membership
+<<<<<<< HEAD
         topPanel = new JPanel(new BorderLayout(5, 5));
         topPanelBorder = BorderFactory.createTitledBorder(langManager.getText("membership_discount_title"));
         topPanel.setBorder(topPanelBorder);
@@ -115,6 +129,69 @@ public class PaymentDialog extends JDialog {
         
         centerPanel.add(new JLabel("")); centerPanel.add(new JLabel(""));
         
+=======
+        JPanel topPanel = new JPanel(new BorderLayout(5, 5));
+        topPanel.setBorder(BorderFactory.createTitledBorder("Membership Discount"));
+        topPanel.setPreferredSize(new Dimension(480, 120));
+        
+        JPanel memberInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        phoneLabel = new JLabel("Phone Number:");
+        phoneField = new JTextField(15);
+        phoneField.setFont(new Font("Arial", Font.PLAIN, 14));
+        checkMemberButton = new JButton("Check Member");
+        checkMemberButton.setBackground(new Color(0, 123, 255));
+        checkMemberButton.setForeground(Color.WHITE);
+        checkMemberButton.setFont(new Font("Arial", Font.BOLD, 12));
+        checkMemberButton.setOpaque(true);
+        checkMemberButton.setBorderPainted(false);
+        
+        memberInputPanel.add(phoneLabel);
+        memberInputPanel.add(phoneField);
+        memberInputPanel.add(checkMemberButton);
+        
+        memberInfoLabel = new JLabel("No member selected");
+        memberInfoLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        memberInfoLabel.setForeground(Color.GRAY);
+        
+        JPanel memberDisplayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        memberDisplayPanel.add(memberInfoLabel);
+        
+        topPanel.add(memberInputPanel, BorderLayout.NORTH);
+        topPanel.add(memberDisplayPanel, BorderLayout.CENTER);
+        
+        // Center panel - Payment details
+        JPanel centerPanel = new JPanel(new GridLayout(7, 2, 10, 10));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        
+        // Original amount
+        totalAmountLabel = new JLabel("Original Amount:");
+        centerPanel.add(totalAmountLabel);
+        JLabel totalLabel = new JLabel(langManager.formatPrice(originalAmount));
+        totalLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        totalLabel.setForeground(new Color(0, 0, 0));
+        centerPanel.add(totalLabel);
+        
+        // Discount
+        membershipLabel = new JLabel("Membership Discount:");
+        centerPanel.add(membershipLabel);
+        discountLabel = new JLabel(langManager.formatPrice(0) + " (0%)");
+        discountLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        discountLabel.setForeground(new Color(220, 53, 69));
+        centerPanel.add(discountLabel);
+        
+        // Final amount
+        centerPanel.add(new JLabel("Final Amount:"));
+        finalAmountLabel = new JLabel(langManager.formatPrice(finalAmount));
+        finalAmountLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        finalAmountLabel.setForeground(new Color(0, 128, 0));
+        centerPanel.add(finalAmountLabel);
+        
+        // Separator
+        centerPanel.add(new JSeparator());
+        centerPanel.add(new JSeparator());
+        
+        // Payment method
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
         paymentMethodLabel = new JLabel(langManager.getText("payment_method"));
         centerPanel.add(paymentMethodLabel);
         JPanel methodPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -157,9 +234,16 @@ public class PaymentDialog extends JDialog {
         
         add(buttonPanel, BorderLayout.SOUTH);
         
+<<<<<<< HEAD
         // Listeners
         checkMemberButton.addActionListener(e -> checkMembership());
         phoneField.addActionListener(e -> checkMembership());
+=======
+        // Add listeners
+        checkMemberButton.addActionListener(e -> checkMembership());
+        phoneField.addActionListener(e -> checkMembership());
+        
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
         cashRadio.addActionListener(e -> amountReceivedField.setEnabled(true));
         cardRadio.addActionListener(e -> {
             amountReceivedField.setEnabled(false);
@@ -183,6 +267,7 @@ public class PaymentDialog extends JDialog {
         cancelButton.addActionListener(e -> dispose());
     }
     
+<<<<<<< HEAD
     private void updateFonts() {
         String fontName = (langManager.getCurrentLanguage() == LanguageManager.Language.KOREAN) ? "Malgun Gothic" : "Arial";
         Font labelFont = new Font(fontName, Font.BOLD, 12);
@@ -252,10 +337,23 @@ public class PaymentDialog extends JDialog {
         String phone = phoneField.getText().trim();
         if (phone.isEmpty()) { resetMembership(); return; }
         Member member = membershipController.getMemberByPhone(phone);
+=======
+    private void checkMembership() {
+        String phone = phoneField.getText().trim();
+        
+        if (phone.isEmpty()) {
+            resetMembership();
+            return;
+        }
+        
+        Member member = membershipController.getMemberByPhone(phone);
+        
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
         if (member != null) {
             currentMember = member;
             double discountAmount = member.calculateDiscount(originalAmount);
             finalAmount = originalAmount - discountAmount;
+<<<<<<< HEAD
             memberInfoLabel.setText("✓ " + member.getName() + " (" + member.getLevelName() + ")");
             memberInfoLabel.setForeground(new Color(0, 128, 0));
             discountLabel.setText(langManager.formatPrice(discountAmount) + String.format(" (%.0f%%)", member.getDiscountPercent()));
@@ -264,17 +362,43 @@ public class PaymentDialog extends JDialog {
         } else {
             currentMember = null;
             memberInfoLabel.setText("✗ " + langManager.getText("member_not_found"));
+=======
+            
+            memberInfoLabel.setText(String.format("✓ %s - %s (%.0f%% discount)", 
+                member.getName(), member.getLevelDescription(), member.getDiscountPercent()));
+            memberInfoLabel.setForeground(new Color(0, 128, 0));
+            
+            discountLabel.setText(String.format("%s (%.0f%%)", 
+                langManager.formatPrice(discountAmount), member.getDiscountPercent()));
+            finalAmountLabel.setText(langManager.formatPrice(finalAmount));
+        } else {
+            currentMember = null;
+            memberInfoLabel.setText("✗ Phone number not found. No discount applied.");
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
             memberInfoLabel.setForeground(new Color(220, 53, 69));
             resetMembership();
         }
     }
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
     private void resetMembership() {
         currentMember = null;
         finalAmount = originalAmount;
         discountLabel.setText(langManager.formatPrice(0) + " (0%)");
         finalAmountLabel.setText(langManager.formatPrice(finalAmount));
+<<<<<<< HEAD
         calculateChange();
     }
+=======
+        if (phoneField.getText().trim().isEmpty()) {
+            memberInfoLabel.setText("No member selected");
+            memberInfoLabel.setForeground(Color.GRAY);
+        }
+    }
+    
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
     private void calculateChange() {
         try {
             String text = amountReceivedField.getText().trim();
@@ -282,8 +406,14 @@ public class PaymentDialog extends JDialog {
             double received = Double.parseDouble(text);
             double change;
             if (langManager.getCurrentLanguage() == LanguageManager.Language.KOREAN) {
+<<<<<<< HEAD
                 change = received - (finalAmount * 1200); 
                 change = change / 1200.0;
+=======
+                // Convert Won to USD (divide by exchange rate)
+                double receivedInUSD = received / 1200;
+                change = receivedInUSD - finalAmount;
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
             } else {
                 change = received - finalAmount;
             }
@@ -291,8 +421,36 @@ public class PaymentDialog extends JDialog {
             changeLabel.setText(langManager.formatPrice(change));
         } catch (NumberFormatException ex) { changeLabel.setText(langManager.formatPrice(0)); }
     }
+<<<<<<< HEAD
     public boolean isConfirmed() { return confirmed; }
     public boolean isCashPayment() { return cashRadio.isSelected(); }
+=======
+    
+    public double getFinalAmount() {
+        return finalAmount;
+    }
+    
+    public Member getCurrentMember() {
+        return currentMember;
+    }
+    
+    public MembershipController getMembershipController() {
+        return membershipController;
+    }
+    
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+    
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
+    }
+    
+    public boolean isCashPayment() {
+        return cashRadio.isSelected();
+    }
+    
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
     public double getAmountReceived() {
         try {
             double val = Double.parseDouble(amountReceivedField.getText().trim());
@@ -300,6 +458,23 @@ public class PaymentDialog extends JDialog {
             return val;
         } catch (Exception e) { return 0.0; }
     }
+<<<<<<< HEAD
     public Member getCurrentMember() { return currentMember; }
     public double getFinalAmount() { return finalAmount; }
 }
+=======
+    
+    public double getOriginalAmount() {
+        return originalAmount;
+    }
+    
+    public JButton getConfirmButton() {
+        return confirmButton;
+    }
+    
+    public JButton getCancelButton() {
+        return cancelButton;
+    }
+}
+
+>>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
