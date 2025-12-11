@@ -7,7 +7,6 @@ import view.PaymentDialog;
 import util.LanguageManager;
 import database.OrderDAO;
 import database.PaymentDAO;
-import database.MemberDAO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +24,6 @@ public class OrderController {
     private LanguageManager langManager;
     private OrderDAO orderDAO;
     private PaymentDAO paymentDAO;
-    private MemberDAO memberDAO;
     
     public OrderController(MenuManager menuManager, SalesData salesData, OrderView view, view.MembershipView membershipView) {
         this.menuManager = menuManager;
@@ -36,7 +34,6 @@ public class OrderController {
         this.langManager = LanguageManager.getInstance();
         this.orderDAO = new OrderDAO();
         this.paymentDAO = new PaymentDAO();
-        this.memberDAO = new MemberDAO();
         
         createNewOrder();
         initializeListeners();
@@ -148,25 +145,9 @@ public class OrderController {
         
         if (paymentDialog.isConfirmed()) {
             try {
-<<<<<<< HEAD
-                double finalAmount = paymentDialog.getFinalAmount();
-                Payment.PaymentMethod method = paymentDialog.isCashPayment() ? Payment.PaymentMethod.CASH : Payment.PaymentMethod.CARD;
-                String paymentId = String.format("PAY%s", currentOrder.getOrderId());
-                Payment payment = new Payment(paymentId, currentOrder.getOrderId(), finalAmount, method);
-                
-                if (method == Payment.PaymentMethod.CASH) {
-                    payment.processCashPayment(paymentDialog.getAmountReceived());
-                }
-                
-                Member member = paymentDialog.getCurrentMember();
-                if (member != null) {
-                    member.addSpending(finalAmount);
-                    memberDAO.updateMember(member);
-                }
-                
-=======
                 // Get final amount (after membership discount)
                 double finalAmount = paymentDialog.getFinalAmount();
+                double originalAmount = paymentDialog.getOriginalAmount();
                 
                 if (paymentDialog.isCashPayment()) {
                     double received = paymentDialog.getAmountReceived();
@@ -215,7 +196,6 @@ public class OrderController {
                 }
                 
                 // Record sale
->>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
                 currentOrder.setStatus("Completed");
                 salesData.recordSale(payment, currentOrder);
                 orderDAO.insertOrder(currentOrder);
@@ -226,7 +206,16 @@ public class OrderController {
                 msg.append(langManager.getText("payment_success")).append("\n");
                 msg.append("--------------------------------\n");
                 msg.append(langManager.getText("order_id")).append(": ").append(currentOrder.getOrderId()).append("\n");
-                msg.append(langManager.getText("total")).append(" ").append(langManager.formatPrice(finalAmount)).append("\n");
+                
+                if (currentMember != null) {
+                    msg.append("--------------------------------\n");
+                    msg.append(langManager.getText("label_member")).append(": ").append(currentMember.getName());
+                    msg.append(" (").append(currentMember.getLevelName()).append(")\n");
+                    msg.append(langManager.getText("original_amount")).append(": ").append(langManager.formatPrice(originalAmount)).append("\n");
+                    msg.append(langManager.getText("membership_discount_label")).append(": -").append(langManager.formatPrice(originalAmount - finalAmount)).append("\n");
+                }
+                
+                msg.append(langManager.getText("total")).append(": ").append(langManager.formatPrice(finalAmount)).append("\n");
                 
                 if (method == Payment.PaymentMethod.CASH) {
                     // LanguageResources에 있는 "received"와 "change" 키 사용 (공백 제거)
@@ -235,30 +224,6 @@ public class OrderController {
                     
                     msg.append(receivedLabel).append(": ").append(langManager.formatPrice(payment.getReceivedAmount())).append("\n");
                     msg.append(changeLabel).append(": ").append(langManager.formatPrice(payment.getChangeAmount())).append("\n");
-                }
-                
-<<<<<<< HEAD
-                if (member != null) {
-                    msg.append("--------------------------------\n");
-                    msg.append(langManager.getText("label_member")).append(": ").append(member.getName());
-                    msg.append(" (").append(member.getLevelName()).append(")");
-=======
-                // Show success message
-                String message = langManager.getText("payment_success") + currentOrder.getOrderId() + "\n";
-                
-                // Show membership discount info if applicable
-                if (currentMember != null) {
-                    message += "Member: " + currentMember.getName() + " (" + currentMember.getLevelDescription() + ")\n";
-                    message += "Original: " + langManager.formatPrice(totalAmount) + "\n";
-                    message += "Discount: -" + langManager.formatPrice(totalAmount - finalAmount) + "\n";
-                }
-                
-                message += langManager.getText("total") + " " + langManager.formatPrice(finalAmount) + "\n";
-                
-                if (paymentDialog.isCashPayment()) {
-                    message += langManager.getText("received") + langManager.formatPrice(payment.getReceivedAmount()) + "\n";
-                    message += langManager.getText("change") + " " + langManager.formatPrice(payment.getChangeAmount());
->>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
                 }
                 
                 JOptionPane.showMessageDialog(view, msg.toString(), langManager.getText("payment_complete"), JOptionPane.INFORMATION_MESSAGE);

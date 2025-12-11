@@ -19,14 +19,6 @@ public class LanguageResources {
     private static void initEnglish() {
         // --- 1. Main View ---
         english.put("app_title", "Cafe POS System");
-<<<<<<< HEAD
-        english.put("tab_order", "Order");
-        english.put("tab_menu", "Menu Management");
-        english.put("tab_membership", "Membership");
-        english.put("tab_sales", "Sales Statistics");
-        
-        // --- 2. Order View ---
-=======
         english.put("tab_order", "📋 Order");
         english.put("tab_menu", "☕ Menu Management");
         english.put("tab_membership", "👥 Membership");
@@ -51,7 +43,6 @@ public class LanguageResources {
         english.put("max_level", "Max Level");
         
         // Order View
->>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
         english.put("menu_items", "Menu Items");
         english.put("category", "Category:");
         english.put("all", "All");
@@ -201,14 +192,6 @@ public class LanguageResources {
     private static void initKorean() {
         // --- Main & Tabs ---
         korean.put("app_title", "카페 POS 시스템");
-<<<<<<< HEAD
-        korean.put("tab_order", "주문");
-        korean.put("tab_menu", "메뉴 관리");
-        korean.put("tab_membership", "멤버십");
-        korean.put("tab_sales", "매출 통계");
-        
-        // --- Order View ---
-=======
         korean.put("tab_order", "📋 주문");
         korean.put("tab_menu", "☕ 메뉴 관리");
         korean.put("tab_membership", "👥 회원 관리");
@@ -233,7 +216,6 @@ public class LanguageResources {
         korean.put("max_level", "최고 등급");
         
         // Order View
->>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
         korean.put("menu_items", "메뉴 항목");
         korean.put("category", "카테고리:");
         korean.put("all", "전체");

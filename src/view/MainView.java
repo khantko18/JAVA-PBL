@@ -82,7 +82,7 @@ public class MainView extends JFrame {
         add(topPanel, BorderLayout.NORTH);
         add(tabbedPane, BorderLayout.CENTER);
         
-<<<<<<< HEAD
+        // Initialize language buttons to show correct state
         initializeLanguageButtons();
     }
     
@@ -104,10 +104,6 @@ public class MainView extends JFrame {
         tabbedPane.setFont(tabFont);
         
         SwingUtilities.updateComponentTreeUI(this);
-=======
-        // Initialize language buttons to show correct state
-        initializeLanguageButtons();
->>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
     }
     
     private void updateLanguageButtons() {
@@ -122,34 +118,16 @@ public class MainView extends JFrame {
     }
     
     private void initializeLanguageButtons() {
-<<<<<<< HEAD
-=======
         // Set initial button states based on current language
->>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
         updateLanguageButtons();
     }
     
     private void updateTabTitles() {
-<<<<<<< HEAD
-        if (tabbedPane.getTabCount() == 4) {
-            tabbedPane.setTitleAt(0, langManager.getText("tab_order"));
-            tabbedPane.setTitleAt(1, langManager.getText("tab_menu"));
-            tabbedPane.setTitleAt(2, langManager.getText("tab_membership"));
-            tabbedPane.setTitleAt(3, langManager.getText("tab_sales"));
-        } else {
-            tabbedPane.removeAll();
-            tabbedPane.addTab(langManager.getText("tab_order"), orderView);
-            tabbedPane.addTab(langManager.getText("tab_menu"), menuManagementView);
-            tabbedPane.addTab(langManager.getText("tab_membership"), membershipView);
-            tabbedPane.addTab(langManager.getText("tab_sales"), salesView);
-        }
-=======
         tabbedPane.removeAll();
         tabbedPane.addTab(langManager.getText("tab_order"), orderView);
         tabbedPane.addTab(langManager.getText("tab_menu"), menuManagementView);
         tabbedPane.addTab(langManager.getText("tab_membership"), membershipView);
         tabbedPane.addTab(langManager.getText("tab_sales"), salesView);
->>>>>>> 55a700e2030741b882993273b0411ca7dd52da67
     }
     
     private void setupLanguageListener() {
@@ -168,14 +146,6 @@ public class MainView extends JFrame {
         }
     }
     
-<<<<<<< HEAD
-    public OrderView getOrderView() { return orderView; }
-    public MenuManagementView getMenuManagementView() { return menuManagementView; }
-    public MembershipView getMembershipView() { return membershipView; }
-    public SalesView getSalesView() { return salesView; }
-    public JTabbedPane getTabbedPane() { return tabbedPane; }
-}
-=======
     public OrderView getOrderView() {
         return orderView;
     }
@@ -196,5 +166,3 @@ public class MainView extends JFrame {
         return tabbedPane;
     }
 }
-
->>>>>>> 55a700e2030741b882993273b0411ca7dd52da67

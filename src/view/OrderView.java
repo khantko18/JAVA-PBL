@@ -134,7 +134,6 @@ public class OrderView extends JPanel {
     private void updateFonts() {
         String fontName = (langManager.getCurrentLanguage() == LanguageManager.Language.KOREAN) ? "Malgun Gothic" : "Arial";
         Font plainFont = new Font(fontName, Font.PLAIN, 12);
-        Font boldFont = new Font(fontName, Font.BOLD, 12);
         Font valueFont = new Font(fontName, Font.BOLD, 14);
         Font totalFont = new Font(fontName, Font.BOLD, 16);
         Font btnFont = new Font(fontName, Font.BOLD, 14);
