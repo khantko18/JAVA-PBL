@@ -2,7 +2,7 @@
 
 A comprehensive Point of Sale (POS) system for cafes built with Java Swing and MySQL database.
 
-## 🎯 Features
+## Features
 
 - ✅ **Complete MVC Architecture** - Model-View-Controller pattern
 - ✅ **MySQL Database Integration** - Persistent data storage
@@ -15,7 +15,7 @@ A comprehensive Point of Sale (POS) system for cafes built with Java Swing and M
 - ✅ **Auto-refresh** - Real-time UI updates
 - ✅ **Order Customization** - Temperature, quantity, order type, extras
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 PBL Project Ver3/
@@ -34,7 +34,7 @@ PBL Project Ver3/
 └── database_schema.sql          # Database schema
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -45,18 +45,21 @@ PBL Project Ver3/
 ### Setup
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/khantko18/JAVA-PBL.git
    cd JAVA-PBL
    ```
 
 2. **Set up the database:**
+
    ```bash
    mysql -u root -p < database_schema.sql
    ```
 
 3. **Configure database connection:**
    Edit `src/database/DatabaseManager.java` with your MySQL credentials:
+
    ```java
    private static final String DB_URL = "jdbc:mysql://localhost:3306/kkkDB";
    private static final String DB_USER = "root";
@@ -64,6 +67,7 @@ PBL Project Ver3/
    ```
 
 4. **Compile:**
+
    ```bash
    ./compile.sh
    ```
@@ -73,16 +77,17 @@ PBL Project Ver3/
    ./run.sh
    ```
 
-## 📖 Documentation
+## Documentation
 
 - [HOW_TO_RUN.md](HOW_TO_RUN.md) - Complete running guide
 - [DATABASE_SETUP.md](DATABASE_SETUP.md) - Database setup instructions
 - [IMAGE_FEATURE_GUIDE.md](IMAGE_FEATURE_GUIDE.md) - Image feature documentation
 - [PERFORMANCE_OPTIMIZATION.md](PERFORMANCE_OPTIMIZATION.md) - Performance improvements
 
-## 🗄️ Database Schema
+## Database Schema
 
 The system uses MySQL with the following main tables:
+
 - `menu_items` - Menu items with images
 - `orders` - Order records
 - `order_items` - Order details
@@ -90,15 +95,17 @@ The system uses MySQL with the following main tables:
 
 See `database_schema.sql` for complete schema.
 
-## 🎨 Features in Detail
+## Features in Detail
 
 ### Menu Management
+
 - Add/Edit/Delete menu items
 - Category management (Coffee, Beverage, Dessert)
 - Image support for menu items
 - Availability toggle (sold out)
 
 ### Order System
+
 - Category filtering
 - BUY button with customization dialog
 - Temperature selection (ICE/HOT)
@@ -107,52 +114,56 @@ See `database_schema.sql` for complete schema.
 - Extras for Coffee/Beverage (Add Shot, Whipping Cream)
 
 ### Payment System
+
 - Cash payment with change calculation
 - Card payment support
 - Order completion and receipt
 
 ### Sales Analytics
+
 - Total revenue tracking
 - Today's sales
 - Popular items
 - CSV export functionality
 
-## 🛠️ Development
+## Development
 
 ### Compile
+
 ```bash
 ./compile.sh
 ```
 
 ### Run
+
 ```bash
 ./run.sh
 ```
 
 ### Run from Eclipse
+
 - Right-click `POSApplication.java` → Run As → Java Application
 
-### Run from VS Code
-- Click ▶️ Run Code button
-
-## 📦 Dependencies
+## Dependencies
 
 - **MySQL Connector/J** 9.4.0 - Database connectivity
 - **Java Swing** - UI framework (included in JDK)
 
-## 🔧 Configuration
+## Configuration
 
 ### Database
+
 - Database: `kkkDB`
 - Default user: `root`
 - Configure in: `src/database/DatabaseManager.java`
 
 ### Images
+
 - Image directory: `images/menu_items/`
 - Supported formats: JPG, PNG, GIF
 - Link images using: `./link_image.sh <item_id> <image_file>`
 
-## 📝 Project Structure
+## Project Structure
 
 ```
 src/
@@ -179,7 +190,7 @@ src/
     └── LanguageResources.java
 ```
 
-## 🎯 Key Technologies
+## Key Technologies
 
 - **Java 11** - Programming language
 - **Java Swing** - GUI framework
@@ -187,29 +198,12 @@ src/
 - **JDBC** - Database connectivity
 - **MVC Pattern** - Architecture pattern
 
-## 📸 Screenshots
-
-*Add screenshots of your application here*
-
-## 🤝 Contributing
-
-This is a PBL (Project-Based Learning) project. Contributions and suggestions are welcome!
-
-## 📄 License
-
-This project is for educational purposes.
-
-## 👤 Author
+## Author
 
 **khantko18**
-- GitHub: [@khantko18](https://github.com/khantko18)
 
-## 🙏 Acknowledgments
+- GitHub: [@khantko18](https://github.com/khantko18)
 
 - MySQL Community
 - Java Swing Documentation
 - All contributors and testers
-
----
-
-**Built with ❤️ for Cafe Management**
