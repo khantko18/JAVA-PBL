@@ -1,5 +1,7 @@
 # 🚀 Quick Start Guide - Your Setup
 
+hhahhah
+
 ## ✅ What's Already Done
 
 ✔️ JDBC driver connected: `mysql-connector-j-9.4.0.jar`  

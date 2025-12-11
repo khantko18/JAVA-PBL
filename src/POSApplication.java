@@ -5,24 +5,23 @@ import model.MenuManager;
 import model.MenuItem;
 import model.SalesData;
 import view.MainView;
+import view.LoginDialog;
 import database.MenuItemDAO;
 import javax.swing.*;
 import java.util.List;
 
 /**
  * Main application entry point for the Cafe POS System
- * This class initializes the MVC components and starts the application
  */
 public class POSApplication {
     private MainView mainView;
     private MenuManager menuManager;
-    private SalesData salesData;	
+    private SalesData salesData;    
     
-    // Controllers - kept as fields for potential future use (cleanup, state management)
+    // Controllers
     @SuppressWarnings("unused")
     private MenuController menuController;
     private OrderController orderController;
-    @SuppressWarnings("unused")
     private SalesController salesController;
     
     public POSApplication() {
@@ -30,7 +29,7 @@ public class POSApplication {
         menuManager = new MenuManager();
         salesData = new SalesData();
         
-        // Load menu items from database BEFORE creating views (fast startup)
+        // Load menu items from database
         loadMenuFromDatabase();
         
         // Initialize View
@@ -40,7 +39,8 @@ public class POSApplication {
         orderController = new OrderController(
             menuManager,
             salesData,
-            mainView.getOrderView()
+            mainView.getOrderView(),
+            mainView.getMembershipView()
         );
         
         menuController = new MenuController(
@@ -54,39 +54,29 @@ public class POSApplication {
             mainView.getSalesView()
         );
         
-        // Setup tab change listener to refresh data
+        // Setup tab change listener
         setupTabChangeListener();
         
         // Show the main window
         mainView.setVisible(true);
     }
     
-    /**
-     * Pre-load menu items from database before UI initialization
-     * This ensures the UI shows database items immediately on startup
-     */
     private void loadMenuFromDatabase() {
         try {
             MenuItemDAO menuItemDAO = new MenuItemDAO();
             List<MenuItem> dbItems = menuItemDAO.getAllMenuItems();
             
             if (!dbItems.isEmpty()) {
-                // Clear default sample items
                 menuManager.getAllMenuItems().clear();
-                
-                // Add database items
                 for (MenuItem item : dbItems) {
                     menuManager.addMenuItem(item);
                 }
-                
                 System.out.println("✅ Pre-loaded " + dbItems.size() + " menu items from database");
             } else {
                 System.out.println("ℹ️ No items in database, using default menu");
             }
         } catch (Exception e) {
             System.err.println("⚠️ Could not pre-load from database: " + e.getMessage());
-            System.err.println("⚠️ Using default menu items");
-            // Continue with default menu items
         }
     }
     
@@ -96,38 +86,35 @@ public class POSApplication {
         tabbedPane.addChangeListener(e -> {
             int selectedIndex = tabbedPane.getSelectedIndex();
             
-            // Refresh order view when switching to it (to reflect sold out changes)
+            // [수정] 탭 인덱스 매핑 수정 (0:주문, 1:메뉴, 2:멤버십, 3:매출)
             if (selectedIndex == 0) { // Order tab
                 orderController.refreshMenu();
             }
             
-            // Refresh sales view when switching to it
-            if (selectedIndex == 2) { // Sales tab
+            // [수정] 매출 통계 탭이 2번에서 3번으로 변경됨
+            if (selectedIndex == 3) { // Sales tab
                 salesController.refreshStatistics();
             }
         });
     }
     
     public static void main(String[] args) {
-        // Set system look and feel for better UI
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
         
-        // Run the application on the Event Dispatch Thread
         SwingUtilities.invokeLater(() -> {
-            new POSApplication();
-            System.out.println("===========================================");
-            System.out.println("  Cafe POS System Started Successfully!");
-            System.out.println("===========================================");
-            System.out.println("MVC Architecture Components:");
-            System.out.println("✓ Models: MenuItem, Order, Payment, SalesData");
-            System.out.println("✓ Views: OrderView, MenuManagementView, SalesView");
-            System.out.println("✓ Controllers: MenuController, OrderController, SalesController");
-            System.out.println("===========================================");
+            LoginDialog loginDialog = new LoginDialog(null);
+            loginDialog.setVisible(true);
+
+            if (loginDialog.isSucceeded()) {
+                new POSApplication();
+                System.out.println("System Started.");
+            } else {
+                System.exit(0);
+            }
         });
     }
 }
-

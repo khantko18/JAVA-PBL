@@ -45,21 +45,18 @@ PBL Project Ver3/
 ### Setup
 
 1. **Clone the repository:**
-
    ```bash
    git clone https://github.com/khantko18/JAVA-PBL.git
    cd JAVA-PBL
    ```
 
 2. **Set up the database:**
-
    ```bash
    mysql -u root -p < database_schema.sql
    ```
 
 3. **Configure database connection:**
    Edit `src/database/DatabaseManager.java` with your MySQL credentials:
-
    ```java
    private static final String DB_URL = "jdbc:mysql://localhost:3306/kkkDB";
    private static final String DB_USER = "root";
@@ -67,7 +64,6 @@ PBL Project Ver3/
    ```
 
 4. **Compile:**
-
    ```bash
    ./compile.sh
    ```
@@ -87,7 +83,6 @@ PBL Project Ver3/
 ## 🗄️ Database Schema
 
 The system uses MySQL with the following main tables:
-
 - `menu_items` - Menu items with images
 - `orders` - Order records
 - `order_items` - Order details
@@ -98,14 +93,12 @@ See `database_schema.sql` for complete schema.
 ## 🎨 Features in Detail
 
 ### Menu Management
-
 - Add/Edit/Delete menu items
 - Category management (Coffee, Beverage, Dessert)
 - Image support for menu items
 - Availability toggle (sold out)
 
 ### Order System
-
 - Category filtering
 - BUY button with customization dialog
 - Temperature selection (ICE/HOT)
@@ -114,13 +107,11 @@ See `database_schema.sql` for complete schema.
 - Extras for Coffee/Beverage (Add Shot, Whipping Cream)
 
 ### Payment System
-
 - Cash payment with change calculation
 - Card payment support
 - Order completion and receipt
 
 ### Sales Analytics
-
 - Total revenue tracking
 - Today's sales
 - Popular items
@@ -129,23 +120,19 @@ See `database_schema.sql` for complete schema.
 ## 🛠️ Development
 
 ### Compile
-
 ```bash
 ./compile.sh
 ```
 
 ### Run
-
 ```bash
 ./run.sh
 ```
 
 ### Run from Eclipse
-
 - Right-click `POSApplication.java` → Run As → Java Application
 
 ### Run from VS Code
-
 - Click ▶️ Run Code button
 
 ## 📦 Dependencies
@@ -156,13 +143,11 @@ See `database_schema.sql` for complete schema.
 ## 🔧 Configuration
 
 ### Database
-
 - Database: `kkkDB`
 - Default user: `root`
 - Configure in: `src/database/DatabaseManager.java`
 
 ### Images
-
 - Image directory: `images/menu_items/`
 - Supported formats: JPG, PNG, GIF
 - Link images using: `./link_image.sh <item_id> <image_file>`
@@ -204,7 +189,7 @@ src/
 
 ## 📸 Screenshots
 
-_Add screenshots of your application here_
+*Add screenshots of your application here*
 
 ## 🤝 Contributing
 
@@ -217,7 +202,6 @@ This project is for educational purposes.
 ## 👤 Author
 
 **khantko18**
-
 - GitHub: [@khantko18](https://github.com/khantko18)
 
 ## 🙏 Acknowledgments
