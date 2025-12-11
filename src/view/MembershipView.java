@@ -433,7 +433,7 @@ public class MembershipView extends JPanel {
         // Remove all hyphens first
         String cleanPhone = phone.replace("-", "");
         
-        // Format as XXX-XXXX-XXXX if it's 10-11 digits
+        // Format: 10 digits as XXX-XXX-XXXX, 11 digits as XXX-XXXX-XXXX
         if (cleanPhone.length() == 10) {
             return cleanPhone.substring(0, 3) + "-" + cleanPhone.substring(3, 6) + "-" + cleanPhone.substring(6);
         } else if (cleanPhone.length() == 11) {
